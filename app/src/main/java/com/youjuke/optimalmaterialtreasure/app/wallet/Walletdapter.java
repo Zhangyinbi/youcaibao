@@ -1,0 +1,81 @@
+package com.youjuke.optimalmaterialtreasure.app.wallet;
+
+import android.content.Context;
+import android.graphics.Color;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.youjuke.optimalmaterialtreasure.R;
+import com.youjuke.optimalmaterialtreasure.entity.WalletInfo;
+
+import java.util.ArrayList;
+
+/**
+ * 描述：钱包明细界面的adapter
+ * author:zyb
+ * Created by Administrator on 2017/2/10.
+ */
+
+public class Walletdapter extends RecyclerView.Adapter<Walletdapter.MyHolder> {
+    private Context context;
+    private ArrayList<WalletInfo> datas;
+
+    public Walletdapter(Context context, ArrayList<WalletInfo> datas) {
+        this.context = context;
+        this.datas = datas;
+    }
+
+
+    @Override
+    public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        MyHolder myHolder = new MyHolder(inflater.inflate(R.layout.item_wallet_adapter, parent, false));
+        return myHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(MyHolder holder, final int position) {
+        if (datas.get(position).getDeal_type()==1){
+            holder.iv_status_pic.setImageResource(R.mipmap.btn_fkdd);
+            holder.tv_describe.setText("订单："+datas.get(position).getNo());
+            holder.tv_money.setTextColor(Color.parseColor("#333333"));
+            holder.tv_money.setText(datas.get(position).getDeal_money());
+        }else if (datas.get(position).getDeal_type()==2){
+            holder.iv_status_pic.setImageResource(R.mipmap.btn_spdk);
+            holder.tv_describe.setText("方式："+datas.get(position).getPay_tool());
+            holder.tv_money.setTextColor(Color.parseColor("#ee0005"));
+            holder.tv_money.setText("+"+datas.get(position).getDeal_money());
+        }
+        holder.tv_time.setText(datas.get(position).getDeal_time());
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return datas.size();
+    }
+
+    public void setdata(ArrayList<WalletInfo> datas) {
+        this.datas = datas;
+    }
+
+    class MyHolder extends RecyclerView.ViewHolder {
+        private ImageView iv_status_pic;
+        private TextView tv_describe;
+        private TextView tv_time;
+        private TextView tv_money;
+
+        public MyHolder(View itemView) {
+            super(itemView);
+            iv_status_pic= (ImageView) itemView.findViewById(R.id.iv_status_pic);
+            tv_describe= (TextView) itemView.findViewById(R.id.tv_describe);
+            tv_time= (TextView) itemView.findViewById(R.id.tv_time);
+            tv_money= (TextView) itemView.findViewById(R.id.tv_money);
+
+        }
+    }
+}

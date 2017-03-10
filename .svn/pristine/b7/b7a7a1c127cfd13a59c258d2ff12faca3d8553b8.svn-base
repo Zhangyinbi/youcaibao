@@ -1,0 +1,88 @@
+package com.youjuke.optimalmaterialtreasure.retrofit;
+
+import com.google.gson.GsonBuilder;
+import com.youjuke.library.utils.HttpsUtils;
+import com.youjuke.optimalmaterialtreasure.OptimalMaterialTreasureApp;
+import com.youjuke.optimalmaterialtreasure.R;
+
+import java.io.File;
+import java.lang.reflect.Modifier;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Cache;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+/**
+ * 描述: retrofit管理类
+ * --------------------------------------------
+ * 工程:
+ * #0000     mwy     创建日期: 2016-08-12 18:07
+ * #0001     xiao    修改日期: 2016-09-09 14:46 修改static 配置配置okHttp
+ * #0002     xiao    修改日期: 2017-01-05 添加HTTPS 证书 更换https 接口 证书有效期2017-12-21
+ */
+public class RetrofitManager {
+    private static RetrofitManager instance;
+    private static Retrofit retrofit;
+    private static OkHttpClient client;
+
+    /**
+     * #0001
+     * 初始化OKHttpClient
+     * 设置缓存
+     * 设置超时时间
+     * 设置打印日志
+     */
+    private static void initOkHttpClient() {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        //设置Http缓存
+        Cache cache = new Cache(new File(OptimalMaterialTreasureApp.getInstance().getCacheDir(), "HttpCache"), 1024 * 1024 * 100);
+        client = new OkHttpClient.Builder()
+                .cache(cache)
+                .addInterceptor(interceptor)
+                .retryOnConnectionFailure(true)
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .sslSocketFactory(
+                        HttpsUtils.getSSLSocketFactory_Certificate(
+                                OptimalMaterialTreasureApp.getInstance(),
+                                "BKS", R.raw.perapi_51youjuke_com))
+                .build();
+    }
+
+    private RetrofitManager() {
+        GsonBuilder builder = new GsonBuilder();
+        builder.excludeFieldsWithModifiers(Modifier.FINAL, Modifier.TRANSIENT, Modifier.STATIC);
+        builder.excludeFieldsWithoutExposeAnnotation();
+        builder.setLenient();
+        builder.registerTypeAdapter(ResponseBean.class, new ResponseBeanDeserializer());
+        retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create(builder.create()))
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .client(client)
+                .build();
+    }
+
+    public static RetrofitManager getInstance() {
+        if (instance == null) {
+            synchronized (RetrofitManager.class) {
+                initOkHttpClient();
+                instance = new RetrofitManager();
+            }
+        }
+        return instance;
+    }
+
+    public <T> T create(Class<T> servise) {
+        return retrofit.create(servise);
+    }
+
+    //baseUrl
+//    public static String baseUrl = "http://api.youjuke.com/ycb/";//线上
+    public static String baseUrl = "http://preapi.51youjuke.com/ycb/";//线下
+}

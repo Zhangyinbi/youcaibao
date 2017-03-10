@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.autolayout.AutoLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f3f6f6"
+    android:orientation="vertical">
+
+    <com.zhy.autolayout.AutoRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="85px"
+        android:orientation="horizontal"
+        android:translationZ="1px">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="85px"
+            android:layout_gravity="center_horizontal"
+            android:background="#fff"
+            android:gravity="center"
+            android:text="@string/activity_goods_standard_title"
+            android:textColor="#333333"
+            android:textSize="40px" />
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="6px"
+            android:background="@android:color/transparent"
+            android:padding="18px"
+            android:src="@mipmap/btn_return" />
+    </com.zhy.autolayout.AutoRelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rlv_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_marginTop="30px"
+        android:layout_marginBottom="-20px"
+        android:layout_weight="1"
+        android:background="@android:color/transparent"></android.support.v7.widget.RecyclerView>
+
+    <com.zhy.autolayout.AutoRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent">
+
+        <com.zhy.autolayout.AutoRelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="90px"
+            android:layout_marginTop="20px"
+            android:visibility="gone"
+            android:id="@+id/arl_no_data"
+            android:background="#5e5e5e">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="154px"
+                android:text="购物车暂无商品"
+                android:textColor="#cccccc"
+                android:textSize="26px" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="154px"
+                android:layout_marginRight="30px"
+                android:text="暂无商品"
+                android:textColor="#cccccc"
+                android:textSize="32px" />
+        </com.zhy.autolayout.AutoRelativeLayout>
+        <com.zhy.autolayout.AutoLinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="90px"
+            android:layout_marginTop="20px"
+            android:id="@+id/arl_you_data"
+            android:visibility="gone"
+            android:background="#fefefe">
+            <View
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="5"/>
+            <TextView
+                android:layout_width="0px"
+                android:gravity="center"
+                android:layout_weight="3"
+                android:text="进入购物车"
+                android:id="@+id/tv_settlement"
+                android:textSize="26px"
+                android:background="#f22e2d"
+                android:textColor="#fff"
+                android:layout_height="match_parent" />
+        </com.zhy.autolayout.AutoLinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20px"
+            android:layout_marginLeft="24px" />
+
+        <TextView
+            android:id="@+id/tv_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@id/iv_icon"
+            android:layout_alignRight="@id/iv_icon"
+            android:layout_marginEnd="-10px"
+            android:layout_marginRight="-10px"
+            android:background="@mipmap/btn_tuoyuan"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="22px"
+            android:visibility="gone"/>
+    </com.zhy.autolayout.AutoRelativeLayout>
+</com.zhy.autolayout.AutoLinearLayout>

@@ -1,0 +1,132 @@
+package com.youjuke.optimalmaterialtreasure.app.shopping_cart.DialogFragments;
+
+import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.TextView;
+import com.youjuke.library.base.BaseRecyclerAdapter;
+import com.youjuke.library.base.BaseRecyclerViewHolder;
+import com.youjuke.library.rxbus.RxBus;
+import com.youjuke.library.utils.L;
+import com.youjuke.optimalmaterialtreasure.R;
+import com.youjuke.optimalmaterialtreasure.app.site.AddSiteActivity;
+import com.youjuke.optimalmaterialtreasure.entity.SiteInfo;
+import java.util.ArrayList;
+
+/**
+ * 描述: 选择
+ * ------------------------------------------------------------------------
+ * 工程:
+ * #0000     tian xiao     创建日期: 2017-02-17 11:20
+ */
+@SuppressLint("ValidFragment")
+public class SelelctAddressDialogFragment extends DialogFragment {
+
+    private Dialog dialog;
+    private Context context;
+    private View view;
+    private ArrayList<SiteInfo> datas;
+    private SelelctAddressAdapter adapter;
+    private TextView tvAddAddress;
+    private RecyclerView rvSelectAddress;
+    private ImageView iv_no_address;
+    private OnClickListener mOnClickListener;
+
+    private void assignViews() {
+        iv_no_address= (ImageView) view.findViewById(R.id.iv_no_address);
+        tvAddAddress = (TextView)view. findViewById(R.id.tv_add_address);
+        rvSelectAddress = (RecyclerView) view.findViewById(R.id.rv_select_address);
+    }
+
+    @SuppressLint("ValidFragment")
+    public SelelctAddressDialogFragment(Context context, ArrayList<SiteInfo> datas) {
+        super();
+        this.context=context;
+        this.datas=datas;
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        view = LayoutInflater.from(context).inflate(R.layout.dialog_select_address, null);
+        assignViews();
+        // 使用不带Theme的构造器, 获得的dialog边框距离屏幕仍有几毫米的缝隙。
+        dialog = new Dialog(getActivity(), R.style.BottomDialog);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // 设置Content前设定
+        dialog.setContentView(view);
+        dialog.setCanceledOnTouchOutside(true); // 外部点击取消
+        // 设置宽度为屏宽, 靠近屏幕底部。
+        final Window window = dialog.getWindow();
+
+        assert window != null;
+        window.setWindowAnimations(R.style.AnimBottom);
+
+        final WindowManager.LayoutParams lp = window.getAttributes();
+        lp.gravity = Gravity.BOTTOM; // 紧贴底部
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT; // 宽度持平
+        //lp.height = getActivity().getWindowManager().getDefaultDisplay().getHeight() * 3 / 5;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        window.setAttributes(lp);
+
+        tvAddAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, AddSiteActivity.class);
+                intent.putExtra("gd_id", -1);
+                startActivity(intent);
+                dialog.dismiss();
+            }
+        });
+
+        if (datas!=null&&datas.size()>0) {
+            iv_no_address.setVisibility(View.GONE);
+            rvSelectAddress.setVisibility(View.VISIBLE);
+            adapter = new SelelctAddressAdapter(context, datas);
+            adapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener<SiteInfo>() {
+                @Override
+                public void onItemClick(BaseRecyclerViewHolder view, final int position, final SiteInfo model) {
+                    view.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            L.d("地址选择第" + position);
+                            mOnClickListener.setOnClick(model.getGd_id());
+                            dialog.dismiss();
+                        }
+                    });
+                }
+
+                @Override
+                public void onItemLongClick(BaseRecyclerViewHolder view, int position, SiteInfo model) {
+
+                }
+            });
+            adapter.notifyDataSetChanged();
+            rvSelectAddress.setLayoutManager(new LinearLayoutManager(context));
+            rvSelectAddress.setItemAnimator(new DefaultItemAnimator());
+            rvSelectAddress.setAdapter(adapter);
+        }
+        return dialog;
+    }
+
+
+    public interface OnClickListener<T>{
+        void setOnClick(int gd_id);
+    }
+
+    public void setOnClickListener(OnClickListener mOnClickListener){
+        this.mOnClickListener=mOnClickListener;
+    }
+}

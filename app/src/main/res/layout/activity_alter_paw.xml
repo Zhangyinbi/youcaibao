@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.autolayout.AutoLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f9f9f9"
+    android:orientation="vertical">
+
+    <com.zhy.autolayout.AutoRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="85px"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="85px"
+            android:layout_gravity="center_horizontal"
+            android:background="#fff"
+            android:gravity="center"
+            android:textColor="#333333"
+            android:textSize="40px" />
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="6px"
+            android:background="@android:color/transparent"
+            android:padding="18px"
+            android:src="@mipmap/btn_return" />
+    </com.zhy.autolayout.AutoRelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#e8ebec"
+        app:layout_auto_basewidth="height" />
+
+    <com.zhy.autolayout.AutoLinearLayout
+        android:id="@+id/all"
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:background="#fff"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"
+            android:gravity="center"
+            android:text="@string/activity_alter_paw_login_paw"
+            android:textColor="#333"
+            android:textSize="35px" />
+
+        <EditText
+            android:id="@+id/et_login_paw"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:hint="@string/activity_alter_hint_please_input_paw_login_paw"
+            android:inputType="textPassword"
+            android:paddingLeft="24px"
+            android:textColor="#333"
+            android:textColorHint="#cfcfcf"
+            android:textSize="35px" />
+
+    </com.zhy.autolayout.AutoLinearLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#e8ebec"
+        app:layout_auto_basewidth="height" />
+
+    <com.zhy.autolayout.AutoLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:background="#fff"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"
+            android:gravity="center"
+            android:text="原   密   码 ："
+            android:textColor="#333"
+            android:textSize="35px" />
+
+        <EditText
+            android:id="@+id/et_old_paw"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:background="#fff"
+            android:hint="请输入原始密码"
+            android:inputType="textPassword"
+            android:paddingLeft="24px"
+            android:textColor="#333"
+            android:textColorHint="#cfcfcf"
+            android:textSize="35px" />
+    </com.zhy.autolayout.AutoLinearLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#e8ebec"
+        app:layout_auto_basewidth="height" />
+
+    <com.zhy.autolayout.AutoLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:background="#fff"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"
+            android:gravity="center"
+            android:text="新   密   码 ："
+            android:textColor="#333"
+            android:textSize="35px" />
+
+        <EditText
+            android:id="@+id/et_new_paw"
+            android:layout_width="0px"
+            android:layout_height="100px"
+            android:layout_weight="3"
+            android:background="#fff"
+            android:hint="请输入新密码"
+            android:inputType="textPassword"
+            android:paddingLeft="24px"
+            android:textColor="#333"
+            android:textColorHint="#cfcfcf"
+            android:textSize="35px" />
+    </com.zhy.autolayout.AutoLinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#e8ebec"
+        app:layout_auto_basewidth="height" />
+
+    <com.zhy.autolayout.AutoLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:background="#fff"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"
+            android:gravity="center"
+            android:text="确认新密码："
+            android:textColor="#333"
+            android:textSize="35px" />
+
+        <EditText
+            android:id="@+id/et_repeat_paw"
+            android:layout_width="0px"
+            android:layout_height="100px"
+            android:layout_weight="3"
+            android:background="#fff"
+            android:hint="请再次输入新密码"
+            android:inputType="textPassword"
+            android:paddingLeft="24px"
+            android:textColor="#333"
+            android:textColorHint="#cfcfcf"
+            android:textSize="35px" />
+    </com.zhy.autolayout.AutoLinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="1" />
+
+    <Button
+        android:id="@+id/btn_alter"
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:background="#518bee"
+        android:text="修改"
+        android:textColor="#fff"
+        android:textSize="36px" />
+
+</com.zhy.autolayout.AutoLinearLayout>

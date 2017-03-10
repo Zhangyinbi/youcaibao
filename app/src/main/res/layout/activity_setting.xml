@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.autolayout.AutoLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f9f9f9"
+    android:orientation="vertical">
+
+    <com.zhy.autolayout.AutoRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="85px"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="85px"
+            android:layout_gravity="center_horizontal"
+            android:background="#fff"
+            android:gravity="center"
+            android:text="账户设置"
+            android:textColor="#333333"
+            android:textSize="40px" />
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="6px"
+            android:background="@android:color/transparent"
+            android:padding="18px"
+            android:src="@mipmap/btn_return" />
+    </com.zhy.autolayout.AutoRelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="80px"
+        android:gravity="center_vertical"
+        android:paddingLeft="24px"
+        android:text="账号"
+        android:textColor="#333333"
+        android:textSize="30px" />
+
+    <com.zhy.autolayout.AutoLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="180px"
+        android:background="#fff"
+        android:paddingLeft="24px"
+        android:paddingRight="24px">
+
+        <TextView
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="头像"
+            android:textColor="#333333"
+            android:textSize="32px" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ci_head_pic"
+            android:layout_width="140px"
+            android:layout_height="140px"
+            android:layout_gravity="center_vertical"
+            app:civ_border_color="#a0a4ae"
+            app:civ_border_width="2dp" />
+    </com.zhy.autolayout.AutoLinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#e8ebec"
+        app:layout_auto_basewidth="height" />
+
+    <com.zhy.autolayout.AutoLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:background="#fff"
+        android:paddingLeft="24px"
+        android:paddingRight="24px">
+
+        <TextView
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="公司"
+            android:textColor="#333333"
+            android:textSize="32px" />
+
+        <TextView
+            android:id="@+id/tv_company_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:textColor="#999999"
+            android:textSize="32px" />
+    </com.zhy.autolayout.AutoLinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#e8ebec"
+        app:layout_auto_basewidth="height" />
+
+    <com.zhy.autolayout.AutoLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:background="#fff"
+        android:paddingLeft="24px"
+        android:paddingRight="24px">
+
+        <TextView
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="用户名"
+            android:textColor="#333333"
+            android:textSize="32px" />
+
+        <TextView
+            android:id="@+id/tv_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:textColor="#999999"
+            android:textSize="32px" />
+    </com.zhy.autolayout.AutoLinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#e8ebec"
+        app:layout_auto_basewidth="height" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="80px"
+        android:gravity="center_vertical"
+        android:paddingLeft="24px"
+        android:text="安全"
+        android:textColor="#333333"
+        android:textSize="30px" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#e8ebec"
+        app:layout_auto_basewidth="height" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:background="#ffffff"
+        android:drawableRight="@mipmap/btn_right_arrow_1"
+        android:gravity="center_vertical"
+        android:paddingLeft="24px"
+        android:paddingRight="24px"
+        android:text="密码"
+        android:id="@+id/tv_password"
+        android:textColor="#333333"
+        android:textSize="32px" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#e8ebec"
+        app:layout_auto_basewidth="height" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:background="#ffffff"
+        android:drawableRight="@mipmap/btn_right_arrow_1"
+        android:gravity="center_vertical"
+        android:paddingLeft="24px"
+        android:paddingRight="24px"
+        android:id="@+id/tv_pay_password"
+        android:text="支付密码"
+        android:textColor="#333333"
+        android:textSize="32px" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="1" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:background="#518bee"
+        android:text="退出当前账户"
+        android:id="@+id/btn_out"
+        android:textColor="#fff"
+        android:textSize="32px" />
+</com.zhy.autolayout.AutoLinearLayout>

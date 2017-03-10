@@ -1,0 +1,142 @@
+package com.youjuke.optimalmaterialtreasure.app.catalogue;
+
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
+import android.graphics.Color;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.youjuke.library.base.BaseActivity;
+import com.youjuke.library.utils.MoneySimpleFormat;
+import com.youjuke.library.utils.NumUtil;
+import com.youjuke.library.utils.ToastUtil;
+import com.youjuke.optimalmaterialtreasure.R;
+import com.youjuke.optimalmaterialtreasure.entity.MaterialDetails;
+import com.youjuke.optimalmaterialtreasure.weights.AmountView;
+
+/**
+ * 描述：添加购物车的弹出框
+ * Created by Administrator on 2017/2/6.
+ * author   zyb
+ */
+
+public abstract class AddCartDialog implements View.OnClickListener {
+    private Context context;
+    private Dialog dialog;
+    private View inflate;
+    private TextView tvTitle;
+    private ImageView ivBack;
+    private TextView tv_price;
+    private TextView tv_material_norms;
+    private TextView tv_material_model;
+    private TextView tv_material_color;
+    private TextView tv_brand;
+    private AmountView av_num;
+    MaterialDetails materialDetails;
+    private Button btn_add_cart;
+
+    public AddCartDialog(Context context) {
+        this.context = context;
+        initView();
+    }
+
+    private void initView() {
+        inflate = LayoutInflater.from(context).inflate(R.layout.dialog_add_cart, null);
+        tvTitle = (TextView) inflate.findViewById(R.id.tv_title);
+        ivBack = (ImageView) inflate.findViewById(R.id.iv_back);
+        ivBack.setOnClickListener(this);
+        btn_add_cart = (Button) inflate.findViewById(R.id.btn_add_cart);
+        btn_add_cart.setOnClickListener(this);
+        tv_price = (TextView) inflate.findViewById(R.id.tv_price);
+        av_num = (AmountView) inflate.findViewById(R.id.av_num);
+        tv_material_norms = (TextView) inflate.findViewById(R.id.tv_material_norms);
+        tv_material_model = (TextView) inflate.findViewById(R.id.tv_material_model);
+        tv_material_color = (TextView) inflate.findViewById(R.id.tv_material_color);
+        tv_brand = (TextView) inflate.findViewById(R.id.tv_brand);
+        dialog = new Dialog(context, R.style.Sweet_Alert_Dialog);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.setContentView(inflate);
+        Window dialogWindow = dialog.getWindow();
+        dialogWindow.setGravity(Gravity.BOTTOM);
+        //设置dialog弹出时的动画效果，从屏幕底部向上弹出
+        dialogWindow.setWindowAnimations(R.style.cartDialogStyle);
+        dialogWindow.getDecorView().setPadding(0, 0, 0, 0);
+        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+        //设置窗口宽度为充满全屏
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        //设置窗口高度为包裹内容
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialogWindow.setAttributes(lp);
+
+    }
+
+    int status;
+
+    public void setData(MaterialDetails materialDetails) {
+        this.materialDetails = materialDetails;
+        tvTitle.setText(materialDetails.getTitle());
+        tv_brand.setText(materialDetails.getBrand());
+        tv_material_color.setText(materialDetails.getMaterial_color());
+        tv_material_model.setText(materialDetails.getMaterial_model());
+        tv_material_norms.setText(materialDetails.getMaterial_norms());
+        if (materialDetails.getMaterial_price().trim().contains(context.getString(R.string.no_sales_in_the_region))) {
+            btn_add_cart.setBackgroundColor(Color.parseColor("#808080"));
+//            btn_add_cart.setEnabled(false);
+            status = 1;//表示该地区暂不销售此商品
+        } else {
+            btn_add_cart.setBackgroundColor(Color.parseColor("#518ced"));
+//            btn_add_cart.setEnabled(true);
+            status = 2;//有价格或者是登录可见
+        }
+        if (NumUtil.isNumber(materialDetails.getMaterial_price())) {
+            String money = MoneySimpleFormat.getMoneyType(materialDetails.getMaterial_price());
+            tv_price.setText(money);
+            return;
+        }
+        tv_price.setText(materialDetails.getMaterial_price());
+    }
+
+    public void show() {
+        if (dialog != null)
+            av_num.setAmount("1");
+        dialog.show();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.iv_back:
+                InputMethodManager inputmanger = (InputMethodManager) (context).getSystemService(Activity.INPUT_METHOD_SERVICE);
+                if (inputmanger.hideSoftInputFromWindow(inflate.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS)) {
+                    View mView = ((BaseActivity) context).getWindow().peekDecorView();
+                    inputmanger.hideSoftInputFromWindow(inflate.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+                dialog.dismiss();
+                break;
+            case R.id.btn_add_cart:
+                if (status == 1) {
+                    ToastUtil.show(context, context.getString(R.string.your_location_don_not_sale_the_goods));
+                } else {
+                    addCart(materialDetails.getMaterial_id(), av_num.getNum());
+                }
+                break;
+        }
+    }
+
+    public abstract void addCart(int id, String num);
+
+
+    public void dismiss() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+    }
+}

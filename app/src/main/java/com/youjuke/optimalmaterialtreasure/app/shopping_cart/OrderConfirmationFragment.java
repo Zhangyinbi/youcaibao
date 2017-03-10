@@ -1,0 +1,620 @@
+package com.youjuke.optimalmaterialtreasure.app.shopping_cart;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ScrollView;
+import android.widget.TextView;
+
+import com.google.gson.reflect.TypeToken;
+import com.youjuke.library.base.BaseFragment;
+import com.youjuke.library.manager.ActivityManager;
+import com.youjuke.library.rxbus.RxBus;
+import com.youjuke.library.rxbus.annotation.Subscribe;
+import com.youjuke.library.rxbus.annotation.Tag;
+import com.youjuke.library.rxbus.thread.EventThread;
+import com.youjuke.library.utils.L;
+import com.youjuke.library.utils.SPUtil;
+import com.youjuke.library.utils.ToastUtil;
+import com.youjuke.optimalmaterialtreasure.OptimalMaterialTreasureApp;
+import com.youjuke.optimalmaterialtreasure.R;
+import com.youjuke.optimalmaterialtreasure.app.goods.GoodsFragment;
+import com.youjuke.optimalmaterialtreasure.app.login.LoginActivity;
+import com.youjuke.optimalmaterialtreasure.app.rechargeable.PaySuccessActivity;
+import com.youjuke.optimalmaterialtreasure.app.rechargeable.RechargeableActivity;
+import com.youjuke.optimalmaterialtreasure.app.shopping_cart.DialogFragments.PaymentCodeDialogFragment;
+import com.youjuke.optimalmaterialtreasure.app.shopping_cart.DialogFragments.SelelctAddressDialogFragment;
+import com.youjuke.optimalmaterialtreasure.app.shopping_cart.DialogFragments.SetPasswordDialogFragment;
+import com.youjuke.optimalmaterialtreasure.entity.Materials;
+import com.youjuke.optimalmaterialtreasure.entity.MaterialsBean;
+import com.youjuke.optimalmaterialtreasure.entity.OrderConfirmation;
+import com.youjuke.optimalmaterialtreasure.entity.OrderDetail;
+import com.youjuke.optimalmaterialtreasure.entity.SiteInfo;
+import com.youjuke.optimalmaterialtreasure.retrofit.ApiContstants;
+import com.youjuke.optimalmaterialtreasure.retrofit.RequestBean;
+import com.youjuke.optimalmaterialtreasure.retrofit.ResponseBean;
+import com.youjuke.optimalmaterialtreasure.retrofit.RetrofitManager;
+import com.youjuke.optimalmaterialtreasure.retrofit.api.CommonService;
+import com.youjuke.optimalmaterialtreasure.weights.PwdInputView;
+import com.zhy.autolayout.AutoLinearLayout;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
+
+/**
+ * 描述: 确认订单页面
+ * ------------------------------------------------------------------------
+ * 工程:
+ * #0000     tian xiao     创建日期: 2017-02-13 14:26  这个接口先
+ * 确认订单-然后选择地址,在选择完成地址后，提交一次订单，生成订单，返回订单所有数据包括订单编号等-然后就可以支付了。。蒙蔽。。
+ */
+public class OrderConfirmationFragment extends BaseFragment implements View.OnClickListener {
+
+    private SetPasswordDialogFragment setPasswordDialog;
+    private PaymentCodeDialogFragment paymentCodeDialog;
+    private ArrayList<SiteInfo> datas;
+    private Toolbar toolbar;
+    private SelelctAddressDialogFragment selelctAddressDialog;
+    private OrderConfirmation order;
+    private OrderConfirmationAdapter adapter;
+    private List<Materials> materialsList;
+    private OrderDetail orderDetail;
+    private String orderId;
+
+    private Toolbar toolBar;
+    private ScrollView scrollView;
+    private AutoLinearLayout llAddAddress;
+    private AutoLinearLayout llSelectAddress;
+    private RecyclerView rvOrder;
+    private TextView tvTotalCount;
+    private TextView tvAccountMoney;
+    private AppCompatButton btnRechargeable;
+    private AutoLinearLayout autoLinearLayout;
+    private TextView tvTotalPrice;
+    private AppCompatButton btnPayment;
+    private TextView tvOrderTotalPrice;
+    private TextView tvOrderAddTime;
+    private TextView tvOrderId;
+    private TextView tvOwnerName;
+    private TextView tvOwnerMobile;
+    private TextView tvAcceptAddress;
+
+    public static boolean isRefresh=false;
+    private void assignViews() {
+        tvAcceptAddress=$(R.id.tv_accept_address);
+        tvOwnerMobile=$(R.id.tv_owner_mobile);
+        tvOwnerName=$(R.id.tv_owner_name);
+        tvOrderId=$(R.id.tv_order_id);
+        tvOrderAddTime=$(R.id.tv_order_addtime);
+        tvOrderTotalPrice= $(R.id.tv_order_total_price);
+        toolBar =  $(R.id.tool_bar);
+        scrollView =  $(R.id.scrollView);
+        llAddAddress =  $(R.id.ll_add_address);
+        llSelectAddress =  $(R.id.ll_select_address);
+        rvOrder = $(R.id.rv_order);
+        tvTotalCount =  $(R.id.tv_total_count);
+        tvAccountMoney =  $(R.id.tv_account_money);
+        btnRechargeable =  $(R.id.btn_rechargeable);
+        autoLinearLayout = $(R.id.autoLinearLayout);
+        tvTotalPrice =  $(R.id.tv_total_price);
+        btnPayment =  $(R.id.btn_payment);
+        toolbar = $(R.id.tool_bar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RxBus.get().post("outShoppingCart", 1);
+            }
+        });
+        btnRechargeable.setOnClickListener(this);
+        btnPayment.setOnClickListener(this);
+        llAddAddress.setOnClickListener(this);
+        llSelectAddress.setOnClickListener(this);
+        adapter = new OrderConfirmationAdapter(mContext, null);
+        rvOrder.setLayoutManager(new LinearLayoutManager(mContext));
+        rvOrder.setItemAnimator(new DefaultItemAnimator());
+        rvOrder.setAdapter(adapter);
+        materialsList = new ArrayList<>();
+
+
+
+
+        setPasswordDialog = new SetPasswordDialogFragment(mContext);
+        setPasswordDialog.setOnClickListener(new SetPasswordDialogFragment.OnClickListener() {
+            @Override
+            public void setOnClick(final AppCompatEditText etPassword, final AppCompatEditText etPayPwd,
+                                   final AppCompatEditText etPayPwd2, AppCompatButton button) {
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        InputMethodManager inputmanger = (InputMethodManager)getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                        if (inputmanger.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS)) {
+                            inputmanger.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                        }
+                        if (etPassword.getText().toString().isEmpty()){
+                            ToastUtil.show(mContext, "登录密码不能为空");
+                        }else if(etPayPwd.getText().toString().isEmpty()||etPayPwd.getText().toString().length()!=6){
+                            ToastUtil.show(mContext, "支付密码不能为空,且必须是6位数字");
+                        }else if (etPayPwd2.getText().toString().isEmpty()||etPayPwd2.getText().toString().length()!=6){
+                            ToastUtil.show(mContext, "重复密码不能为空,且必须是6位数字");
+                        }else if (!etPayPwd.getText().toString().equals(etPayPwd2.getText().toString())){
+                            ToastUtil.show(mContext, "支付密码两次输入不相同");
+                        }else {
+                            setPaypwd(etPassword.getText().toString(), etPayPwd.getText().toString(),
+                                    etPayPwd2.getText().toString());
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+
+    public static OrderConfirmationFragment newInstance() {
+        return new OrderConfirmationFragment();
+    }
+
+    @Override
+    public int getLayoutResId() {
+        return R.layout.fragment_order_confirmation;
+    }
+
+    @Override
+    public void finishCreateView(Bundle state) {
+        assignViews();
+
+    }
+
+    /**
+     * 选择地址
+     */
+    private void selelctAddress() {
+        params.clear();
+        myDialog.show();
+        params.put("uid", OptimalMaterialTreasureApp.user.getId());
+        params.put("token", OptimalMaterialTreasureApp.user.getToken());
+        compositeSubscription.add(RetrofitManager.getInstance().create(CommonService.class)
+                .getData(new RequestBean.JsonMsg(ApiContstants.ADDRESS_LIST, params).toJson())
+                .compose(this.<ResponseBean>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ResponseBean>() {
+                               @Override
+                               public void onCompleted() {
+                                   myDialog.dismiss();
+                               }
+
+                               @Override
+                               public void onError(Throwable e) {
+                                   myDialog.dismiss();
+                               }
+
+                               @Override
+                               public void onNext(ResponseBean responseBean) {
+                                   //成功
+                                   if (responseBean.getStatus().equals("200")) {
+                                       datas = gson.fromJson(responseBean.getData(), new TypeToken<ArrayList<SiteInfo>>() {
+                                       }.getType());
+                                       selelctAddressDialog = new SelelctAddressDialogFragment(mContext, datas);
+                                       selelctAddressDialog.setOnClickListener(new SelelctAddressDialogFragment.OnClickListener() {
+                                           @Override
+                                           public void setOnClick(int gd_id) {
+                                                   subimt_order(gd_id);
+                                           }
+                                       });
+                                       selelctAddressDialog.show(getFragmentManager(), "selectAddressDialog");
+                                   } else if (responseBean.getStatus().equals("400") && responseBean.getError().equals("020")) {
+                                       ToastUtil.show(getApplicationContext(), responseBean.getMessage());
+                                       startActivity(new Intent(mContext, LoginActivity.class));
+                                   }
+                               }
+                           }
+                )
+        );
+    }
+
+    /**
+     * 获取订单详情
+     */
+    public void getOrderDetail(){
+        params.clear();
+        myDialog.show();
+        params.put("uid", OptimalMaterialTreasureApp.user.getId());
+        params.put("token", OptimalMaterialTreasureApp.user.getToken());
+        params.put("mobile", OptimalMaterialTreasureApp.user.getMobile());
+        params.put("orderId", orderId);
+        compositeSubscription.add(
+                RetrofitManager.getInstance().create(CommonService.class)
+                        .getData(new RequestBean.JsonMsg("order_detail", params).toJson())
+                        .compose(this.<ResponseBean>bindToLifecycle())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(new Action1<ResponseBean>() {
+                            @Override
+                            public void call(ResponseBean responseBean) {
+                                myDialog.dismiss();
+                                if ("200".equals(responseBean.getStatus())) {
+                                    orderDetail = gson.fromJson(responseBean.getData(),
+                                            new TypeToken<OrderDetail>(){}.getType());
+                                    orderDetail();
+                                } else if ("400".equals(responseBean.getStatus())) {
+                                    ToastUtil.show(mContext, responseBean.getMessage());
+                                }
+                            }
+                        }, new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                L.e(throwable.toString());
+                                myDialog.dismiss();
+                            }
+                        })
+        );
+    }
+
+    /**
+     * 确认订单
+     */
+    public void getOrderInfo() {
+        params.clear();
+        myDialog.show();
+        params.put("uid", OptimalMaterialTreasureApp.user.getId());
+        params.put("token", OptimalMaterialTreasureApp.user.getToken());
+        params.put("mobile", OptimalMaterialTreasureApp.user.getMobile());
+        if (order!=null){
+            for (MaterialsBean material :order.getMaterials()) {
+                Materials materials = new Materials();
+                materials.setMatId(material.getMaterialId());
+                materials.setCount(material.getMaterialCount());
+                materialsList.add(materials);
+            }
+            params.put("materials", materialsList);
+        }
+        compositeSubscription.add(
+                RetrofitManager.getInstance().create(CommonService.class)
+                        .getData(new RequestBean.JsonMsg("confirm_order", params).toJson())
+                        .compose(this.<ResponseBean>bindToLifecycle())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(new Action1<ResponseBean>() {
+                            @Override
+                            public void call(ResponseBean responseBean) {
+                                myDialog.dismiss();
+                                L.d("填充数据"+"200".equals(responseBean.getStatus()));
+                                if ("200".equals(responseBean.getStatus())) {
+                                    L.d("解析json");
+                                    order = gson.fromJson(responseBean.getData(),new TypeToken<OrderConfirmation>(){}.getType());
+                                    L.d("填充数据");
+
+                                    confirmOrder();
+                                } else if ("400".equals(responseBean.getStatus())) {
+                                    ToastUtil.show(mContext, responseBean.getMessage());
+                                }
+                            }
+                        }, new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                L.e(throwable.toString());
+                                myDialog.dismiss();
+                            }
+                        })
+        );
+    }
+
+    /**
+     * 填充确认订单
+     */
+    private void confirmOrder() {
+        adapter.addAll(order.getMaterials());
+        adapter.notifyDataSetChanged();
+        tvTotalCount.setText(order.getTotalInfo().getTotalCount().trim());
+        tvTotalPrice.setText("￥"+order.getTotalInfo().getTotalPrice().trim());
+        tvAccountMoney.setText("(" + order.getTotalInfo().getAccountMoney().trim() + ")");
+        tvOrderTotalPrice.setText("￥"+order.getTotalInfo().getTotalPrice().trim());
+    }
+
+    /**
+     * 提交订单之后返回的订单详情
+     */
+    private void orderDetail(){
+        adapter.addAll(orderDetail.getMaterials());
+        adapter.notifyDataSetChanged();
+        tvTotalCount.setText(orderDetail.getTotalInfo().getTotalCount().trim());
+        tvTotalPrice.setText("￥"+orderDetail.getTotalInfo().getTotalPrice().trim());
+        tvAccountMoney.setText("(" + orderDetail.getTotalInfo().getAccountMoney().trim() + ")");
+        tvOrderTotalPrice.setText("￥"+orderDetail.getTotalInfo().getTotalPrice().trim());
+
+        llAddAddress.setVisibility(View.GONE);
+        llSelectAddress.setVisibility(View.VISIBLE);
+        tvOwnerName.setText(orderDetail.getBuildingSite().getOwnerName());
+        tvOwnerMobile.setText(orderDetail.getBuildingSite().getOwnerMobile());
+        tvAcceptAddress.setText(Html.fromHtml(orderDetail.getBuildingSite().getAcceptAddress()));
+    }
+
+    /**
+     * 提交订单
+     * @param buildingSiteId
+     */
+    public void subimt_order(Integer buildingSiteId) {
+
+        params.clear();
+        myDialog.show();
+        params.put("uid", OptimalMaterialTreasureApp.user.getId());
+        params.put("token", OptimalMaterialTreasureApp.user.getToken());
+        params.put("mobile", OptimalMaterialTreasureApp.user.getMobile());
+        params.put("buildingSiteId", buildingSiteId);
+        if (order!=null&&order.getMaterials()!=null) {
+            for (MaterialsBean material : order.getMaterials()) {
+                Materials materials = new Materials();
+                materials.setMatId(material.getMaterialId());
+                materials.setCount(material.getMaterialCount());
+                materialsList.add(materials);
+            }
+        }else {
+            for (MaterialsBean material : orderDetail.getMaterials()) {
+                Materials materials = new Materials();
+                materials.setMatId(material.getMaterialId());
+                materials.setCount(material.getMaterialCount());
+                materialsList.add(materials);
+            }
+        }
+
+        params.put("materials", materialsList);
+        if (orderDetail!=null&&orderDetail.getTotalInfo().getOrders().size()>0){
+            List<String> listorderIds=new ArrayList<>();
+
+            for (OrderDetail.TotalInfoBean.OrdersBean order:
+                    orderDetail.getTotalInfo().getOrders()
+                 ) {
+
+               listorderIds.add(order.getId());
+
+            }
+            params.put("orderIds",listorderIds);
+        }
+
+
+        compositeSubscription.add(
+                RetrofitManager.getInstance().create(CommonService.class)
+                        .getData(new RequestBean.JsonMsg("submit_order", params).toJson())
+                        .compose(this.<ResponseBean>bindToLifecycle())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(new Action1<ResponseBean>() {
+                            @Override
+                            public void call(ResponseBean responseBean) {
+                                L.d("订单详情:" + responseBean.getData());
+                                if ("200".equals(responseBean.getStatus())) {
+                                    orderDetail=gson.fromJson(responseBean.getData(),
+                                            new TypeToken<OrderDetail>(){}.getType());
+                                    orderDetail();
+                                } else if ("400".equals(responseBean.getStatus())) {
+                                    ToastUtil.show(mContext, responseBean.getMessage());
+                                }
+                                myDialog.dismiss();
+                            }
+                        }, new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                myDialog.dismiss();
+                            }
+                        })
+        );
+    }
+
+    /**
+     * 设置支付密码
+     */
+    public void  setPaypwd(String etPassword, String etPayPwd, String etPayPwd2){
+        params.clear();
+        myDialog.show();
+        params.put("uid", OptimalMaterialTreasureApp.user.getId());
+        params.put("token", OptimalMaterialTreasureApp.user.getToken());
+        params.put("password", etPassword);
+        params.put("paypwd", etPayPwd);
+        params.put("paypwd2", etPayPwd2);
+        compositeSubscription.add(
+                RetrofitManager.getInstance().create(CommonService.class)
+                        .getData(new RequestBean.JsonMsg("set_paypwd", params).toJson())
+                        .compose(this.<ResponseBean>bindToLifecycle())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(new Action1<ResponseBean>() {
+                            @Override
+                            public void call(ResponseBean responseBean) {
+                                L.d("订单详情:" + responseBean.getData());
+                                if ("200".equals(responseBean.getStatus())) {
+                                    ToastUtil.show(mContext, responseBean.getMessage());
+                                    OptimalMaterialTreasureApp.user.setHas_paypwd("1");
+                                    SPUtil.setObject(getApplicationContext(), "user",OptimalMaterialTreasureApp.user);
+                                    setPasswordDialog.dismiss();
+                                } else if ("400".equals(responseBean.getStatus())) {
+                                    ToastUtil.show(mContext, responseBean.getMessage());
+                                }
+                                myDialog.dismiss();
+                            }
+                        }, new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                myDialog.dismiss();
+                            }
+                        })
+        );
+    } /**
+     * 支付
+     */
+    public void  ordersPay(String paypwd){
+        params.clear();
+        myDialog.show();
+        params.put("uid", OptimalMaterialTreasureApp.user.getId());
+        params.put("token", OptimalMaterialTreasureApp.user.getToken());
+        params.put("mobile", OptimalMaterialTreasureApp.user.getMobile());
+        params.put("paypwd", paypwd);
+        List<String> list=new ArrayList<>();
+        for (OrderDetail.TotalInfoBean.OrdersBean m: orderDetail.getTotalInfo().getOrders()) {
+            list.add(m.getId());
+        }
+        params.put("orderIds", list);
+
+        compositeSubscription.add(
+                RetrofitManager.getInstance().create(CommonService.class)
+                        .getData(new RequestBean.JsonMsg("orders_pay", params).toJson())
+                        .compose(this.<ResponseBean>bindToLifecycle())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(new Action1<ResponseBean>() {
+                            @Override
+                            public void call(ResponseBean responseBean) {
+                                L.d("订单详情:" + responseBean.getData());
+                                if ("200".equals(responseBean.getStatus())) {
+                                    paymentCodeDialog.dismiss();
+                                    startActivity(new Intent(mContext,PaySuccessActivity.class));
+                                    ActivityManager.getInstance().finishActivity(ShoppingCartActivity.class);
+                                } else if ("400".equals(responseBean.getStatus())) {
+                                    ToastUtil.show(mContext, responseBean.getMessage());
+                                }
+                                myDialog.dismiss();
+                            }
+                        }, new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                myDialog.dismiss();
+                            }
+                        })
+        );
+    }
+
+
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            //选择地址
+            case R.id.ll_add_address:
+            case R.id.ll_select_address:
+                selelctAddress();
+                break;
+            //支付
+            case R.id.btn_payment:
+                if (llSelectAddress.getVisibility()==View.VISIBLE){
+                    //进行支付
+                    if ("0".equals(OptimalMaterialTreasureApp.user.getHas_paypwd())){
+                        //设置支付密码
+                        setPasswordDialog.show(getFragmentManager(), "setPasswordDialog");
+                    }else if ("1".equals(OptimalMaterialTreasureApp.user.getHas_paypwd())){
+                        double accountMoney = Double.parseDouble(orderDetail.getTotalInfo().getAccountMoney());
+                        double totalPrice = Double.parseDouble(orderDetail.getTotalInfo().getTotalPrice());
+
+                        if(accountMoney >= totalPrice) {
+                            //支付密码
+                            paymentCodeDialog = new PaymentCodeDialogFragment(mContext,tvTotalPrice.getText().toString());
+                            paymentCodeDialog.setOnClickListener(new PaymentCodeDialogFragment.OnClickListener() {
+                                @Override
+                                public void setOnClick(PwdInputView pwdInputView) {
+                                    pwdInputView.setInputCallBack(new PwdInputView.InputCallBack() {
+                                        @Override
+                                        public void onInputFinished(String result) {
+                                            //支付
+                                            ordersPay(result);
+                                        }
+                                    });
+                                }
+                            });
+                            paymentCodeDialog.show(getFragmentManager(), "setPasswordDialog");
+                        }else {
+                            showDialog("余额不足,请先充值","");
+                        }
+                    }
+                }else{
+                    ToastUtil.show(mContext,"请选择施工地址");
+                }
+                break;
+            case R.id.btn_rechargeable:
+                //充值
+                    startActivity(new Intent(mContext, RechargeableActivity.class));
+                break;
+        }
+    }
+
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Bundle bundle=getArguments();
+        if (bundle!=null) {
+            orderId = bundle.getString("order_id");
+            L.d("获取的order_id" + orderId);
+        }
+
+
+        if (orderId!=null&&!orderId.isEmpty()){
+            //获取订单详情
+            getOrderDetail();
+        }else {
+            //获取购物车订单
+            getOrderInfo();
+        }
+    }
+
+    private AlertDialog.Builder builder;
+    private AlertDialog dialog;
+    /***
+     * 提示
+     *
+     * @param title
+     */
+    public void showDialog(String title, final String MatId) {
+        builder = new AlertDialog.Builder(mContext);
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        View layout = inflater.inflate(R.layout.alert_dialog_delect_order, null);
+        builder.setView(layout);
+        dialog = builder.show();
+        TextView textViewGoBack = (TextView) layout.findViewById(R.id.text_go_back);
+        TextView textViewCancel = (TextView) layout.findViewById(R.id.text_cancel);
+        textViewCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        TextView textViewTiele = (TextView) layout.findViewById(R.id.textView_title);
+        textViewTiele.setText(title);
+        textViewGoBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(mContext,RechargeableActivity.class));
+                dialog.dismiss();
+            }
+        });
+    }
+
+//    /**
+//     * 切换
+//     *
+//     * @param num
+//     */
+//    @Subscribe(
+//            thread = EventThread.MAIN_THREAD,
+//            tags = {
+//                    @Tag("OrderConfirmationFragment.setAccountMoney")
+//            })
+//    public void setAccountMoney(String num){
+//        tvAccountMoney.setText(num);
+//    }
+
+}

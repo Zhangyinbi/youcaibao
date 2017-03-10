@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">优材宝</string>
+    <string name="goods_top_notices">一次结算只能送往一个工地,多个工地订单请分开结算</string>
+    <string name="activity_add_site_title">添加工地</string>
+    <string name="activity_add_site_construction_site">施工工地</string>
+    <string name="activity_add_site_owner_call">业主称呼：</string>
+    <string name="activity_add_site_hint_please_input_owner_name">请填写业主姓名</string>
+    <string name="activity_add_site_owner_mobile">业主电话：</string>
+    <string name="activity_add_site_hint_please_mobile">请填写收货手机号码</string>
+    <string name="activity_add_site_decorate_size">装修面积：</string>
+    <string name="activity_add_site_input_please_decorate_size">请输入装修面积</string>
+    <string name="activity_add_site_start_time">开工时间：</string>
+    <string name="activity_add_site_area">所在地区：</string>
+    <string name="activity_add_site_please_select">请选择</string>
+    <string name="activity_add_site_detail_area">详细地址：</string>
+    <string name="activity_add_site_hint_please_input_detail_area">例如：谈家渡路28号盛泉大厦</string>
+    <string name="activity_add_site_add_area">添加地址</string>
+    <string name="activity_alter_paw_login_paw">登 录 密 码 ：</string>
+    <string name="activity_alter_hint_please_input_paw_login_paw">请输入登录新密码</string>
+    <string name="activity_goods_standard_title">选择商品规格</string>
+    <string name="no_sales_in_the_region">该地区暂不销售</string>
+    <string name="your_location_don_not_sale_the_goods">您所在的地区暂不销售此商品</string>
+</resources>

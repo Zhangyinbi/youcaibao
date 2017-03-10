@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.autolayout.AutoLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f9f9f9"
+    android:orientation="vertical">
+
+    <com.zhy.autolayout.AutoRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="85px"
+        android:orientation="horizontal"
+        android:translationZ="1px">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="85px"
+            android:layout_gravity="center_horizontal"
+            android:background="#fff"
+            android:gravity="center"
+            android:text="钱包明细"
+            android:textColor="#333333"
+            android:textSize="40px" />
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="6px"
+            android:background="@android:color/transparent"
+            android:padding="18px"
+            android:src="@mipmap/btn_return" />
+    </com.zhy.autolayout.AutoRelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#e8ebec"
+        android:translationZ="1px"
+        app:layout_auto_basewidth="height" />
+
+    <RadioGroup
+        android:id="@+id/rg_group"
+        android:layout_width="match_parent"
+        android:layout_height="90px"
+        android:background="#fff"
+        android:orientation="horizontal"
+        android:translationZ="1px">
+
+        <RadioButton
+            android:id="@+id/btn_all"
+            style="@style/WalletStyle"
+            android:text="全部" />
+
+        <RadioButton
+            android:id="@+id/btn_order"
+            style="@style/WalletStyle"
+            android:text="订单" />
+
+        <RadioButton
+            android:id="@+id/btn_recharge"
+            style="@style/WalletStyle"
+            android:text="充值" />
+    </RadioGroup>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="30px"
+        android:background="#f9f9f9"
+        android:translationZ="1px" />
+    <ImageView
+        android:id="@+id/iv_no_wallet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="290px"
+        android:src="@mipmap/btn_wdz"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tv_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="70px"
+        android:text="暂无钱包明细信息"
+        android:textColor="#808080"
+        android:visibility="gone" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rlv_recycle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"></android.support.v7.widget.RecyclerView>
+</com.zhy.autolayout.AutoLinearLayout>

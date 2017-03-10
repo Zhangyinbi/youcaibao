@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.autolayout.AutoLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f9f9f9"
+    android:orientation="vertical">
+
+    <com.zhy.autolayout.AutoRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="85px"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="85px"
+            android:layout_gravity="center_horizontal"
+            android:background="#fff"
+            android:gravity="center"
+            android:text="@string/activity_add_site_title"
+            android:textColor="#333333"
+            android:textSize="40px" />
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="6px"
+            android:background="@android:color/transparent"
+            android:padding="18px"
+            android:src="@mipmap/btn_return" />
+    </com.zhy.autolayout.AutoRelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="80px"
+        android:gravity="center_vertical"
+        android:paddingLeft="24px"
+        android:text="@string/activity_add_site_construction_site"
+        android:textColor="#333333"
+        android:textSize="30px" />
+
+    <com.zhy.autolayout.AutoLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="94px"
+        android:background="#fff"
+        android:paddingLeft="24px"
+        android:paddingRight="24px">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="@string/activity_add_site_owner_call"
+            android:textColor="#333"
+            android:textSize="32px" />
+
+        <EditText
+            android:id="@+id/et_name"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="46px"
+            android:background="@android:color/transparent"
+            android:gravity="center_vertical"
+            android:hint="@string/activity_add_site_hint_please_input_owner_name"
+            android:textColor="#333"
+            android:singleLine="true"
+            android:textColorHint="#808080"
+            android:textSize="32px" />
+
+    </com.zhy.autolayout.AutoLinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="24px"
+        android:layout_marginRight="24px"
+        android:background="#e8ebec"
+        app:layout_auto_basewidth="height" />
+
+
+    <com.zhy.autolayout.AutoLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="94px"
+        android:background="#fff"
+        android:paddingLeft="24px"
+        android:paddingRight="24px">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="@string/activity_add_site_owner_mobile"
+            android:textColor="#333"
+            android:textSize="32px" />
+
+        <EditText
+            android:id="@+id/et_mobile"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="46px"
+            android:inputType="number"
+            android:maxLength="11"
+            android:background="@android:color/transparent"
+            android:gravity="center_vertical"
+            android:hint="@string/activity_add_site_hint_please_mobile"
+            android:singleLine="true"
+            android:textColor="#333"
+            android:textColorHint="#808080"
+            android:textSize="32px" />
+
+    </com.zhy.autolayout.AutoLinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="24px"
+        android:layout_marginRight="24px"
+        android:background="#e8ebec"
+        app:layout_auto_basewidth="height" />
+
+    <com.zhy.autolayout.AutoLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="94px"
+        android:background="#fff"
+        android:paddingLeft="24px"
+        android:paddingRight="24px">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="@string/activity_add_site_decorate_size"
+            android:textColor="#333"
+            android:textSize="32px" />
+
+        <EditText
+            android:id="@+id/et_size"
+            android:layout_width="0px"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="46px"
+            android:background="@android:color/transparent"
+            android:gravity="center_vertical"
+            android:hint="@string/activity_add_site_input_please_decorate_size"
+            android:textColor="#333"
+            android:singleLine="true"
+            android:inputType="numberDecimal"
+            android:textColorHint="#808080"
+            android:textSize="32px" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="(m²)"
+            android:textColor="#808080"
+            android:textSize="26px" />
+
+    </com.zhy.autolayout.AutoLinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="24px"
+        android:layout_marginRight="24px"
+        android:background="#e8ebec"
+        app:layout_auto_basewidth="height" />
+
+    <com.zhy.autolayout.AutoLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="94px"
+        android:background="#fff"
+        android:paddingLeft="24px"
+        android:paddingRight="24px">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="@string/activity_add_site_start_time"
+            android:textColor="#333"
+            android:textSize="32px" />
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="46px"
+            android:background="@android:color/transparent"
+            android:drawableRight="@mipmap/btn_more_3"
+            android:gravity="center_vertical"
+            android:textColor="#333"
+            android:textSize="32px" />
+
+    </com.zhy.autolayout.AutoLinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="24px"
+        android:layout_marginRight="24px"
+        android:background="#e8ebec"
+        app:layout_auto_basewidth="height" />
+
+    <com.zhy.autolayout.AutoLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="94px"
+        android:background="#fff"
+        android:paddingLeft="24px"
+        android:paddingRight="24px">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:drawablePadding="46px"
+            android:drawableRight="@mipmap/btn_add_2"
+            android:gravity="center_vertical"
+            android:text="@string/activity_add_site_area"
+            android:textColor="#333"
+            android:textSize="32px" />
+
+        <TextView
+            android:id="@+id/tv_sheng"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:drawablePadding="10px"
+            android:drawableRight="@mipmap/btn_more_3"
+            android:gravity="center_vertical"
+            android:paddingLeft="15px"
+            android:text="@string/activity_add_site_please_select"
+            android:textColor="#333"
+            android:textSize="32px" />
+
+        <TextView
+            android:id="@+id/tv_shi"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:drawablePadding="10px"
+            android:drawableRight="@mipmap/btn_more_3"
+            android:gravity="center_vertical"
+            android:paddingLeft="15px"
+            android:text="@string/activity_add_site_please_select"
+            android:textColor="#333"
+            android:textSize="32px" />
+
+        <TextView
+            android:id="@+id/tv_qu"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:drawablePadding="10px"
+            android:drawableRight="@mipmap/btn_more_3"
+            android:gravity="center_vertical"
+            android:paddingLeft="15px"
+            android:text="@string/activity_add_site_please_select"
+            android:textColor="#333"
+            android:textSize="32px" />
+    </com.zhy.autolayout.AutoLinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="24px"
+        android:layout_marginRight="24px"
+        android:background="#e8ebec"
+        app:layout_auto_basewidth="height" />
+
+    <com.zhy.autolayout.AutoLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="94px"
+        android:background="#fff"
+        android:paddingLeft="24px"
+        android:paddingRight="24px">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="@string/activity_add_site_detail_area"
+            android:textColor="#333"
+            android:textSize="32px" />
+
+        <EditText
+            android:id="@+id/et_detail_site"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="46px"
+            android:background="@android:color/transparent"
+            android:gravity="center_vertical"
+            android:hint="@string/activity_add_site_hint_please_input_detail_area"
+            android:textColor="#333"
+            android:singleLine="true"
+            android:textColorHint="#808080"
+            android:textSize="32px" />
+    </com.zhy.autolayout.AutoLinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="1" />
+
+    <Button
+        android:id="@+id/btn_add_site"
+        android:layout_width="690px"
+        android:layout_height="96px"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="20px"
+        android:background="@drawable/green_press_check"
+        android:text="@string/activity_add_site_add_area"
+        android:textColor="#fff"
+        android:textSize="36px" />
+</com.zhy.autolayout.AutoLinearLayout>

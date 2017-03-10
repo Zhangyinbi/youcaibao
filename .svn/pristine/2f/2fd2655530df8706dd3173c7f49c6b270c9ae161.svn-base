@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.autolayout.AutoLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f9f9f9"
+    android:orientation="vertical">
+
+   <!-- <View
+        android:id="@+id/fake_status_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/statusbar_view_height"
+        android:background="@color/c_ffffff"
+        android:translationZ="1px" />-->
+
+    <com.zhy.autolayout.AutoRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:translationZ="1px">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="85px"
+            android:layout_gravity="center_horizontal"
+            android:background="#fff"
+            android:gravity="center"
+            android:text="工地列表"
+            android:textColor="#333333"
+            android:textSize="40px" />
+
+        <TextView
+            android:id="@+id/tv_add_site"
+            android:layout_width="wrap_content"
+            android:layout_height="85px"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="24px"
+            android:gravity="center"
+            android:paddingLeft="5px"
+            android:paddingRight="5px"
+            android:text="添加"
+            android:textColor="#333333"
+            android:textSize="36px" />
+    </com.zhy.autolayout.AutoRelativeLayout>
+
+    <ImageView
+        android:id="@+id/iv_no_site"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="290px"
+        android:src="@mipmap/btn_wdz"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tv_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="70px"
+        android:text="没有可供发货的地址"
+        android:textColor="#808080"
+        android:visibility="gone" />
+
+    <View
+        android:id="@+id/vv"
+        android:layout_width="match_parent"
+        android:layout_height="30px"
+        android:background="#f0f2f5"
+        android:translationZ="1px"
+        android:visibility="gone" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rlv_recycle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        android:visibility="gone"></android.support.v7.widget.RecyclerView>
+</com.zhy.autolayout.AutoLinearLayout>

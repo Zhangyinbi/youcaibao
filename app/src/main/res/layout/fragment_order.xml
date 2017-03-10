@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f3f5f7"
+    android:orientation="vertical">
+
+   <!-- <View
+        android:id="@+id/fake_status_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/statusbar_view_height"
+        android:background="@color/c_ffffff" />-->
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="85px"
+        android:layout_gravity="center_horizontal"
+        android:background="#fff"
+        android:gravity="center"
+        android:text="订单跟踪"
+        android:textColor="#333333"
+        android:textSize="40px" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#f0f0f0"
+        app:layout_auto_basewidth="height" />
+
+    <com.zhy.autolayout.AutoLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="41dp"
+        android:background="#fff"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <com.youjuke.optimalmaterialtreasure.weights.MyView
+            android:id="@+id/tv1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:text="全部"
+            app:textsize="15sp" />
+
+        <com.youjuke.optimalmaterialtreasure.weights.MyView
+            android:id="@+id/tv2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:text="待付款"
+            app:textsize="15sp" />
+
+        <com.youjuke.optimalmaterialtreasure.weights.MyView
+            android:id="@+id/tv3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:text="待发货"
+            app:textsize="15sp" />
+
+        <com.youjuke.optimalmaterialtreasure.weights.MyView
+            android:id="@+id/tv4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:text="待收货"
+            app:textsize="15sp" />
+    </com.zhy.autolayout.AutoLinearLayout>
+
+    <View
+        android:id="@+id/tab_line"
+        android:layout_width="wrap_content"
+        android:layout_height="2dp"
+        android:background="#ee0005" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="30px" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginRight="2dp"
+        android:overScrollMode="never"></android.support.v4.view.ViewPager>
+
+
+</LinearLayout>
