@@ -1,0 +1,28 @@
+package com.youjuke.optimalmaterialtreasure.entity;
+
+/**
+ * 描述: 创建订单需要ID和留言即可
+ * ------------------------------------------------------------------------
+ * 工程:
+ * #0000     tian xiao     创建日期: 2017-03-27 14:35
+ */
+public class createOrderInfo {
+    String matId;
+    String matTxt;
+
+    public String getMatId() {
+        return matId;
+    }
+
+    public void setMatId(String matId) {
+        this.matId = matId;
+    }
+
+    public String getMatTxt() {
+        return matTxt;
+    }
+
+    public void setMatTxt(String matTxt) {
+        this.matTxt = matTxt;
+    }
+}

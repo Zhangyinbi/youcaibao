@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="3dp">
+
+    <com.zhy.autolayout.AutoLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32px"
+            android:text="各品类材料送货时间说明"
+            android:textColor="#313131"
+            android:textSize="30px"
+            android:textStyle="bold" />
+
+        <com.zhy.autolayout.AutoLinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="30px"
+            android:background="@drawable/gray2_stroke_box"
+            android:orientation="vertical"
+            android:padding="2px">
+
+            <com.zhy.autolayout.AutoLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="75px">
+
+                <TextView
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="254"
+                    android:gravity="center"
+                    android:text="材料品种"
+                    android:textColor="#313131"
+                    android:textSize="30px" />
+
+                <TextView
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="392"
+                    android:gravity="center"
+                    android:text="送货时间（工作日）"
+                    android:textColor="#313131"
+                    android:textSize="30px" />
+            </com.zhy.autolayout.AutoLinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:background="#eceef5" />
+
+            <com.zhy.autolayout.AutoLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="75px"
+                android:background="#fafafa">
+
+                <TextView
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="254"
+                    android:gravity="center"
+                    android:text="瓷砖"
+                    android:textColor="#313131"
+                    android:textSize="30px" />
+
+                <TextView
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="392"
+                    android:gravity="center"
+                    android:text="8"
+                    android:textColor="#313131"
+                    android:textSize="30px" />
+            </com.zhy.autolayout.AutoLinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:background="#eceef5" />
+
+            <com.zhy.autolayout.AutoLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="75px">
+
+                <TextView
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="254"
+                    android:gravity="center"
+                    android:text="厨电"
+                    android:textColor="#313131"
+                    android:textSize="30px" />
+
+                <TextView
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="392"
+                    android:gravity="center"
+                    android:text="3"
+                    android:textColor="#313131"
+                    android:textSize="30px" />
+            </com.zhy.autolayout.AutoLinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:background="#eceef5" />
+
+            <com.zhy.autolayout.AutoLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="75px"
+                android:background="#fafafa">
+
+                <TextView
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="254"
+                    android:gravity="center"
+                    android:text="涂料"
+                    android:textColor="#313131"
+                    android:textSize="30px" />
+
+                <TextView
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="392"
+                    android:gravity="center"
+                    android:text="3"
+                    android:textColor="#313131"
+                    android:textSize="30px" />
+            </com.zhy.autolayout.AutoLinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:background="#eceef5" />
+
+            <com.zhy.autolayout.AutoLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="75px">
+
+                <TextView
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="254"
+                    android:gravity="center"
+                    android:text="油漆"
+                    android:textColor="#313131"
+                    android:textSize="30px" />
+
+                <TextView
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="392"
+                    android:gravity="center"
+                    android:text="3"
+                    android:textColor="#313131"
+                    android:textSize="30px" />
+            </com.zhy.autolayout.AutoLinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:background="#eceef5" />
+
+            <com.zhy.autolayout.AutoLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="75px"
+                android:background="#fafafa">
+
+                <TextView
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="254"
+                    android:gravity="center"
+                    android:text="水管"
+                    android:textColor="#313131"
+                    android:textSize="30px" />
+
+                <TextView
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="392"
+                    android:gravity="center"
+                    android:text="3"
+                    android:textColor="#313131"
+                    android:textSize="30px" />
+            </com.zhy.autolayout.AutoLinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:background="#eceef5" />
+
+            <com.zhy.autolayout.AutoLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="75px">
+
+                <TextView
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="254"
+                    android:gravity="center"
+                    android:text="免漆门"
+                    android:textColor="#313131"
+                    android:textSize="30px" />
+
+                <TextView
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="392"
+                    android:gravity="center"
+                    android:text="15"
+                    android:textColor="#313131"
+                    android:textSize="30px" />
+            </com.zhy.autolayout.AutoLinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:background="#eceef5" />
+
+            <com.zhy.autolayout.AutoLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="75px"
+                android:background="#fafafa">
+
+                <TextView
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="254"
+                    android:gravity="center"
+                    android:text="烤漆门"
+                    android:textColor="#313131"
+                    android:textSize="30px" />
+
+                <TextView
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="392"
+                    android:gravity="center"
+                    android:text="25"
+                    android:textColor="#313131"
+                    android:textSize="30px" />
+            </com.zhy.autolayout.AutoLinearLayout>
+
+        </com.zhy.autolayout.AutoLinearLayout>
+    </com.zhy.autolayout.AutoLinearLayout>
+</android.support.v7.widget.CardView>

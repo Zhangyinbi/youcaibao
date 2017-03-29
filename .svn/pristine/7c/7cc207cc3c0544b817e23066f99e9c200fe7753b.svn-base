@@ -1,0 +1,281 @@
+package com.youjuke.optimalmaterialtreasure.entity;
+
+import java.util.List;
+
+/**
+ * 描述: 订单详情
+ * ------------------------------------------------------------------------
+ * 工程:
+ * #0000     tian xiao     创建日期: 2017-02-20 13:54
+ */
+public class OrderDetail {
+
+    /**
+     * totalInfo : {"totalCount":2,"totalPrice":152,"accountMoney":"0.00","orders":[{"id":"92","addtime":"2017-02-20 13:52:20"}]}
+     * materials : [{"materialName":"光纤箱","materialProperty":"1","brandId":"15","brandName":"光大","materialId":"507","materialClassifyId":"41","materialModel":"GRB-L","materialNorms":"300*400","materialColor":"白色","materialUnit":"只","materialLoss":"0.00","materialPrice":"144.00","materialCount":"1","totalPrice":144},{"materialName":"滑石粉","materialProperty":"1","brandId":"92","brandName":"家佳宝","materialId":"1432","materialClassifyId":"54","materialModel":"500目","materialNorms":"15kg","materialColor":"无","materialUnit":"包","materialLoss":"0.00","materialPrice":"8.00","materialCount":"1","totalPrice":8}]
+     * buildingSite : {"ownerName":"as","ownerMobile":"13676941583","provinceId":"4","provinceName":"山西","cityId":"18","cityName":"晋城","districtId":"252","districtName":"泽州县","ownerAddress":"SASsaSAs","acceptAddress":"山西&nbsp;晋城&nbsp;泽州县&nbsp;SASsaSAs"}
+     */
+
+    private TotalInfoBean totalInfo;
+    private BuildingSiteBean buildingSite;
+    private List<MaterialsBean> materials;
+
+    @Override
+    public String toString() {
+        return "OrderDetail{" +
+                "totalInfo=" + totalInfo +
+                ", buildingSite=" + buildingSite +
+                ", materials=" + materials +
+                '}';
+    }
+
+    public TotalInfoBean getTotalInfo() {
+        return totalInfo;
+    }
+
+    public void setTotalInfo(TotalInfoBean totalInfo) {
+        this.totalInfo = totalInfo;
+    }
+
+    public BuildingSiteBean getBuildingSite() {
+        return buildingSite;
+    }
+
+    public void setBuildingSite(BuildingSiteBean buildingSite) {
+        this.buildingSite = buildingSite;
+    }
+
+    public List<MaterialsBean> getMaterials() {
+        return materials;
+    }
+
+    public void setMaterials(List<MaterialsBean> materials) {
+        this.materials = materials;
+    }
+
+    public static class TotalInfoBean {
+        /**
+         "accountMoney": "74604.42",
+         "addtime": "2017-03-27 14:49:24",
+         "countdown": 85833,
+         "freight": "150.00",
+         "id": 968,
+         "no": "417032714492463231",
+         "orderStatus": "1",
+         "orderStatusCh": "待付款",
+         "payable": "0",
+         "stairwayFee": "50.00",
+         "totalCount": 1
+         canceltime 取消时间
+
+         order_paytime 下单时间
+
+         receipt_time 发货时间
+
+         delivery_time 确认收货时间
+         */
+        private String accountMoney;
+        private String addtime;
+        private long countdown;
+        private String freight;
+        private String id;
+        private String no;
+        private String orderStatus;
+        private String orderStatusCh;
+        private String payable;
+        private String stairwayFee;
+        private String canceltime;//取消时间
+        private String order_paytime;//付款时间
+        private String receipt_time;//发货时间
+        private String delivery_time;//确认收货时间
+        private String totalCount;
+
+        public String getCanceltime() {
+            return canceltime;
+        }
+
+        public void setCanceltime(String canceltime) {
+            this.canceltime = canceltime;
+        }
+
+        public String getOrder_paytime() {
+            return order_paytime;
+        }
+
+        public void setOrder_paytime(String order_paytime) {
+            this.order_paytime = order_paytime;
+        }
+
+        public String getReceipt_time() {
+            return receipt_time;
+        }
+
+        public void setReceipt_time(String receipt_time) {
+            this.receipt_time = receipt_time;
+        }
+
+        public String getDelivery_time() {
+            return delivery_time;
+        }
+
+        public void setDelivery_time(String delivery_time) {
+            this.delivery_time = delivery_time;
+        }
+
+        @Override
+        public String toString() {
+            return "TotalInfoBean{" +
+                    "accountMoney='" + accountMoney + '\'' +
+                    ", addtime='" + addtime + '\'' +
+                    ", countdown=" + countdown +
+                    ", freight='" + freight + '\'' +
+                    ", id='" + id + '\'' +
+                    ", no='" + no + '\'' +
+                    ", orderStatus='" + orderStatus + '\'' +
+                    ", orderStatusCh='" + orderStatusCh + '\'' +
+                    ", payable='" + payable + '\'' +
+                    ", stairwayFee='" + stairwayFee + '\'' +
+                    ", canceltime='" + canceltime + '\'' +
+                    ", order_paytime='" + order_paytime + '\'' +
+                    ", receipt_time='" + receipt_time + '\'' +
+                    ", delivery_time='" + delivery_time + '\'' +
+                    ", totalCount='" + totalCount + '\'' +
+                    '}';
+        }
+
+        public String getAccountMoney() {
+            return accountMoney;
+        }
+
+        public void setAccountMoney(String accountMoney) {
+            this.accountMoney = accountMoney;
+        }
+
+        public String getAddtime() {
+            return addtime;
+        }
+
+        public void setAddtime(String addtime) {
+            this.addtime = addtime;
+        }
+
+        public long getCountdown() {
+            return countdown;
+        }
+
+        public void setCountdown(long countdown) {
+            this.countdown = countdown;
+        }
+
+        public String getFreight() {
+            return freight;
+        }
+
+        public void setFreight(String freight) {
+            this.freight = freight;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getNo() {
+            return no;
+        }
+
+        public void setNo(String no) {
+            this.no = no;
+        }
+
+        public String getOrderStatus() {
+            return orderStatus;
+        }
+
+        public void setOrderStatus(String orderStatus) {
+            this.orderStatus = orderStatus;
+        }
+
+        public String getOrderStatusCh() {
+            return orderStatusCh;
+        }
+
+        public void setOrderStatusCh(String orderStatusCh) {
+            this.orderStatusCh = orderStatusCh;
+        }
+
+        public String getPayable() {
+            return payable;
+        }
+
+        public void setPayable(String payable) {
+            this.payable = payable;
+        }
+
+        public String getStairwayFee() {
+            return stairwayFee;
+        }
+
+        public void setStairwayFee(String stairwayFee) {
+            this.stairwayFee = stairwayFee;
+        }
+
+        public String getTotalCount() {
+            return totalCount;
+        }
+
+        public void setTotalCount(String totalCount) {
+            this.totalCount = totalCount;
+        }
+    }
+
+    public static class BuildingSiteBean {
+        /**
+         * ownerName : as
+         * ownerMobile : 13676941583
+         * acceptAddress : 山西&nbsp;晋城&nbsp;泽州县&nbsp;SASsaSAs
+         */
+
+        private String ownerName;
+        private String ownerMobile;
+        private String acceptAddress;
+
+        @Override
+        public String toString() {
+            return "BuildingSiteBean{" +
+                    "ownerName='" + ownerName + '\'' +
+                    ", ownerMobile='" + ownerMobile + '\'' +
+                    ", acceptAddress='" + acceptAddress + '\'' +
+                    '}';
+        }
+
+        public String getOwnerName() {
+            return ownerName;
+        }
+
+        public void setOwnerName(String ownerName) {
+            this.ownerName = ownerName;
+        }
+
+        public String getOwnerMobile() {
+            return ownerMobile;
+        }
+
+        public void setOwnerMobile(String ownerMobile) {
+            this.ownerMobile = ownerMobile;
+        }
+
+        public String getAcceptAddress() {
+            return acceptAddress;
+        }
+
+        public void setAcceptAddress(String acceptAddress) {
+            this.acceptAddress = acceptAddress;
+        }
+    }
+
+
+}

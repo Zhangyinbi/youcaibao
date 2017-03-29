@@ -1,0 +1,131 @@
+package com.youjuke.optimalmaterialtreasure.app.login;
+
+import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+
+import com.youjuke.library.base.BaseActivity;
+import com.youjuke.library.manager.ActivityManager;
+import com.youjuke.library.utils.SPUtil;
+import com.youjuke.library.utils.ToastUtil;
+import com.youjuke.optimalmaterialtreasure.OptimalMaterialTreasureApp;
+import com.youjuke.optimalmaterialtreasure.R;
+import com.youjuke.optimalmaterialtreasure.app.MainActivity;
+import com.youjuke.optimalmaterialtreasure.entity.User;
+import com.youjuke.optimalmaterialtreasure.retrofit.ApiContstants;
+import com.youjuke.optimalmaterialtreasure.retrofit.RequestBean;
+import com.youjuke.optimalmaterialtreasure.retrofit.ResponseBean;
+import com.youjuke.optimalmaterialtreasure.retrofit.RetrofitManager;
+import com.youjuke.optimalmaterialtreasure.retrofit.api.CommonService;
+
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
+/**
+ * 描述：登录界面
+ * Created by Administrator on 2017/2/4.
+ * author zyb
+ */
+
+public class LoginActivity extends BaseActivity implements View.OnClickListener {
+
+    private EditText etUserName;
+    private EditText etUserPaw;
+    private Button btnLogin;
+    private String userAccound;
+    private String userPaw;
+
+    @Override
+    public void initViews(Bundle savedInstanceState) {
+        etUserName = (EditText) findViewById(R.id.et_user_name);
+        etUserPaw = (EditText) findViewById(R.id.et_user_paw);
+        btnLogin = (Button) findViewById(R.id.btn_login);
+        btnLogin.setOnClickListener(this);
+    }
+
+    @Override
+    public int getLayoutId() {
+        return R.layout.activity_loading;
+    }
+
+    @Override
+    public void initToolBar() {
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        hideSoftInputFromWindow(v);
+        switch (v.getId()) {
+            case R.id.btn_login:
+                userAccound = etUserName.getText().toString().trim();
+                userPaw = etUserPaw.getText().toString().trim();
+                if (userAccound.length() <= 0) {
+                    ToastUtil.show(LoginActivity.this, "用户名不能为空");
+                } else if (userPaw.length() <= 5) {
+                    ToastUtil.show(LoginActivity.this, "密码不小于6位");
+                } else {
+                    login();//开始登录
+                }
+                break;
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        MainActivity.first=1;
+        return super.onKeyDown(keyCode, event);
+    }
+
+    /**
+     * 登录
+     */
+    private void login() {
+        params.clear();
+        myDialog.show();
+        params.put("username", userAccound);
+        params.put("password", userPaw);
+        compositeSubscription.add(RetrofitManager.getInstance().create(CommonService.class)
+                .getData(new RequestBean.JsonMsg(ApiContstants.LOGIN, params).toJson())
+                .compose(this.<ResponseBean>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ResponseBean>() {
+                               @Override
+                               public void onCompleted() {
+                                   myDialog.dismiss();
+                               }
+
+                               @Override
+                               public void onError(Throwable e) {
+                                   myDialog.dismiss();
+                                   e.printStackTrace();
+                                   ToastUtil.show(getApplicationContext(), "登录失败，请检查网络连接设置并重试");
+                               }
+
+                               @Override
+                               public void onNext(ResponseBean responseBean) {
+                                   //成功
+                                   if (responseBean.getStatus().equals("200")) {
+                                       User user = gson.fromJson(responseBean.getData(), User.class);
+                                       SPUtil.setObject(getApplicationContext(), "user", user);//保存用户信息
+                                       OptimalMaterialTreasureApp.user = user;
+                                       //登录成功直接修改Sp存储的isLoadingStatus状态为true
+                                       SPUtil.put(getApplicationContext(), "isLoadingStatus", true);
+                                       setResult(RESULT_OK);
+                                       MainActivity.first=0;
+                                       ActivityManager.getInstance().finishActivity();
+                                   } else if (responseBean.getStatus().equals("400")) {
+                                       ToastUtil.show(getApplicationContext(), responseBean.getMessage() + "");
+                                       etUserPaw.setText("");
+                                   }
+                               }
+                           }
+                )
+        );
+    }
+
+}

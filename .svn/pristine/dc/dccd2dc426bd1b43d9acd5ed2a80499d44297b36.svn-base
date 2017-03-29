@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.autolayout.AutoLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#ffffff"
+    android:orientation="vertical">
+
+    <com.zhy.autolayout.AutoRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="85px"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="85px"
+            android:layout_gravity="center_horizontal"
+            android:background="#fff"
+            android:gravity="center"
+            android:text="商品列表"
+            android:textColor="#333333"
+            android:textSize="40px" />
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="6px"
+            android:background="@android:color/transparent"
+            android:padding="18px"
+            android:src="@mipmap/btn_return" />
+    </com.zhy.autolayout.AutoRelativeLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#e5e5e5" />
+
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/sliding_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:background="#fff"
+        app:tabIndicatorColor="#ff0000"
+        app:tabTextAppearance="@style/TabLayoutTextStyle"></android.support.design.widget.TabLayout>
+
+    <!--<HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fadeScrollbars="true"
+        android:overScrollMode="never"
+        android:scrollIndicators="none"
+        android:scrollbars="none">
+
+        <RadioGroup
+            android:id="@+id/rg_group"
+            android:layout_width="match_parent"
+            android:layout_height="100px"
+            android:orientation="horizontal"
+            >
+
+            <RadioButton
+                android:id="@+id/rb_water"
+                style="@style/BottomTabStyle"
+                android:text="水" />
+
+            <RadioButton
+                android:id="@+id/rb_electricity"
+                style="@style/BottomTabStyle"
+                android:text="电" />
+
+            <RadioButton
+                android:id="@+id/rb_mud"
+                style="@style/BottomTabStyle"
+                android:text="泥" />
+
+            <RadioButton
+                android:id="@+id/rb_wood"
+                style="@style/BottomTabStyle"
+                android:text="木" />
+
+            <RadioButton
+                android:id="@+id/rb_oil"
+                style="@style/BottomTabStyle"
+                android:text="油" />
+
+            <RadioButton
+                android:id="@+id/rb_metals"
+                style="@style/BottomTabStyle"
+                android:text="厨电" />
+
+            <RadioButton
+                android:id="@+id/rb_muMen"
+                style="@style/BottomTabStyle"
+                android:text="木门" />
+
+            <RadioButton
+                android:id="@+id/rb_ciZuan"
+                style="@style/BottomTabStyle"
+                android:text="瓷砖" />
+        </RadioGroup>
+    </HorizontalScrollView>-->
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#e5e5e5" />
+
+    <com.zhy.autolayout.AutoLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rlv_recycle_brand"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#f3f6f6"></android.support.v7.widget.RecyclerView>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rlv_recycle_goodsdetail"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:background="#fff"></android.support.v7.widget.RecyclerView>
+
+    </com.zhy.autolayout.AutoLinearLayout>
+
+
+</com.zhy.autolayout.AutoLinearLayout>

@@ -1,0 +1,507 @@
+package com.youjuke.optimalmaterialtreasure.app.site;
+
+import android.os.Bundle;
+import android.support.annotation.IdRes;
+import android.text.InputFilter;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+
+import com.bigkoo.pickerview.TimePickerView;
+import com.google.gson.reflect.TypeToken;
+import com.youjuke.library.base.BaseActivity;
+import com.youjuke.library.manager.ActivityManager;
+import com.youjuke.library.utils.L;
+import com.youjuke.library.utils.NumUtil;
+import com.youjuke.library.utils.ToastUtil;
+import com.youjuke.library.utils.Validator;
+import com.youjuke.optimalmaterialtreasure.OptimalMaterialTreasureApp;
+import com.youjuke.optimalmaterialtreasure.R;
+import com.youjuke.optimalmaterialtreasure.entity.Address;
+import com.youjuke.optimalmaterialtreasure.entity.AddressDetail;
+import com.youjuke.optimalmaterialtreasure.entity.Qu;
+import com.youjuke.optimalmaterialtreasure.entity.Sheng;
+import com.youjuke.optimalmaterialtreasure.entity.Shi;
+import com.youjuke.optimalmaterialtreasure.retrofit.ApiContstants;
+import com.youjuke.optimalmaterialtreasure.retrofit.RequestBean;
+import com.youjuke.optimalmaterialtreasure.retrofit.ResponseBean;
+import com.youjuke.optimalmaterialtreasure.retrofit.RetrofitManager;
+import com.youjuke.optimalmaterialtreasure.retrofit.api.CommonService;
+import com.youjuke.optimalmaterialtreasure.utils.InputMoney;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
+/**
+ * 描述：添加工地地址界面
+ * author：zyb
+ * Created by Administrator on 2017/2/16.
+ */
+
+public class AddSiteActivity extends BaseActivity implements View.OnClickListener {
+
+    private int gd_id;
+    private ImageView ivBack;
+    private TimePickerView pvTime;
+    private TextView tv_time;
+    private TextView tv_sheng;
+    private TextView tv_shi;
+    private TextView tv_qu;
+    private ArrayList<Address> datas = new ArrayList<>();
+    private int shengId = -1;
+    private int shiId = -1;
+    private int quId = -1;
+    private Button btn_add_site;
+    private EditText etname;
+    private EditText et_mobile;
+    private EditText et_size;
+    private EditText et_detail_site;
+    private AddressDetail addressDetail;
+    private RadioGroup rgGroup;
+    private EditText etFloor;
+    private int stairway;
+
+    @Override
+    public void initViews(Bundle savedInstanceState) {
+        gd_id = getIntent().getIntExtra("gd_id", -1);
+        initView();
+        if (gd_id != -1) {
+            initDats();
+        } else {
+            ((RadioButton) findViewById(R.id.rb_elevator)).setChecked(true);
+        }
+    }
+
+    /**
+     * 获取工地信息
+     */
+    private void initDats() {
+        myDialog.show();
+        params.clear();
+        params.put("uid", OptimalMaterialTreasureApp.user.getId());
+        params.put("token", OptimalMaterialTreasureApp.user.getToken());
+        params.put("gd_id", gd_id);
+        Subscription subscribe = RetrofitManager.getInstance().create(CommonService.class)
+                .getData(new RequestBean.JsonMsg(ApiContstants.ADDRESS_DETAIL, params).toJson())
+                .compose(this.<ResponseBean>bindToLifecycle())  //生命周期绑定
+                .observeOn(AndroidSchedulers.mainThread())      //设置观察者所在的线程
+                .subscribeOn(Schedulers.io())                   //设置被观察者所在的线程
+                .subscribe(new Subscriber<ResponseBean>() {
+                    @Override
+                    public void onCompleted() {
+                        myDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        L.i("首页数据加载失败！");
+                        e.printStackTrace();
+                        myDialog.dismiss();
+                        ToastUtil.show(AddSiteActivity.this, "加载工地信息加载失败，请检查网络");
+                    }
+
+                    @Override
+                    public void onNext(ResponseBean responseBean) {
+                        L.i("工地数据Data:" + responseBean.getData());
+                        if ("200".equals(responseBean.getStatus())) {
+                            addressDetail = gson.fromJson(responseBean.getData(), AddressDetail.class);
+                            initViewData();
+                        } else {
+                            ToastUtil.show(AddSiteActivity.this, responseBean.getMessage());
+                        }
+                    }
+                });
+        compositeSubscription.add(subscribe);
+    }
+
+    /**
+     * 初始化view的数据
+     */
+    private void initViewData() {
+        etname.setText(addressDetail.getYezhu_name());
+        et_mobile.setText(addressDetail.getYezhu_mobile());
+        et_size.setText(addressDetail.getArea());
+        tv_time.setText(addressDetail.getStart_time());
+        et_detail_site.setText(addressDetail.getAddress());
+        shengId = addressDetail.getProvince_id();
+        shiId = addressDetail.getCity_id();
+        quId = addressDetail.getArea_id();
+        tv_sheng.setText(addressDetail.getP_name());
+        tv_shi.setText(addressDetail.getC_name());
+        tv_qu.setText(addressDetail.getD_name());
+        etFloor.setText(addressDetail.getFloor());
+        stairway=addressDetail.getStairway();
+        if (stairway==2){
+            ((RadioButton)findViewById(R.id.rb_stairs)).setChecked(true);
+        }else {
+            ((RadioButton)findViewById(R.id.rb_elevator)).setChecked(true);
+            stairway=1;
+        }
+
+    }
+
+    private void initView() {
+        ivBack = (ImageView) findViewById(R.id.iv_back);
+        ivBack.setOnClickListener(this);
+        tv_time = (TextView) findViewById(R.id.tv_time);
+        tv_sheng = (TextView) findViewById(R.id.tv_sheng);
+        tv_shi = (TextView) findViewById(R.id.tv_shi);
+        tv_qu = (TextView) findViewById(R.id.tv_qu);
+        tv_qu.setOnClickListener(this);
+        tv_sheng.setOnClickListener(this);
+        tv_shi.setOnClickListener(this);
+        tv_time.setText(getTime(new Date()));
+        tv_time.setOnClickListener(this);
+        btn_add_site = (Button) findViewById(R.id.btn_add_site);
+        btn_add_site.setOnClickListener(this);
+        etname = (EditText) findViewById(R.id.et_name);
+        et_mobile = (EditText) findViewById(R.id.et_mobile);
+        et_size = (EditText) findViewById(R.id.et_size);
+        et_size.setFilters(new InputFilter[]{new InputMoney(et_size)});
+        et_detail_site = (EditText) findViewById(R.id.et_detail_site);
+        rgGroup = (RadioGroup) findViewById(R.id.rg_group);
+        etFloor = (EditText) findViewById(R.id.et_floor);
+        rgGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                switch (checkedId) {
+                    case R.id.rb_elevator://楼梯
+                        stairway = 1;
+                        break;
+                    case R.id.rb_stairs://电梯
+                        stairway = 2;
+                        break;
+                }
+            }
+        });
+
+    }
+
+    /**
+     * 弹出时间选择器
+     */
+    private void showPickerTime() {
+        if (pvTime == null) {
+            //时间选择器
+            pvTime = new TimePickerView(this, TimePickerView.Type.YEAR_MONTH_DAY);
+        }
+        //控制时间范围
+        Calendar calendar = Calendar.getInstance();
+        pvTime.setRange(calendar.get(Calendar.YEAR) - 10, calendar.get(Calendar.YEAR) + 10);//要在setTime 之前才有效果哦
+        pvTime.setTime(new Date());
+        pvTime.setCyclic(false);
+        pvTime.setCancelable(true);
+        //时间选择后回调
+        pvTime.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
+
+            @Override
+            public void onTimeSelect(Date date) {
+                tv_time.setText(getTime(date));
+            }
+        });
+        //弹出时间选择器
+        pvTime.show();
+    }
+
+    @Override
+    public int getLayoutId() {
+        return R.layout.activity_add_site;
+    }
+
+    @Override
+    public void initToolBar() {
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.iv_back:
+                ActivityManager.getInstance().finishActivity();
+                break;
+            case R.id.tv_time:
+                hideSoftInputFromWindow(v);
+                showPickerTime();
+                break;
+            case R.id.tv_sheng:
+                getData();
+                break;
+            case R.id.tv_shi:
+                getDataShi();
+                break;
+            case R.id.tv_qu:
+                getDataQu();
+                break;
+            case R.id.btn_add_site:
+                String name = etname.getText().toString().trim();
+                String mobile = et_mobile.getText().toString().trim();
+                String size = et_size.getText().toString().trim();
+                String detailSite = et_detail_site.getText().toString().trim();
+                String floor = etFloor.getText().toString().trim();
+                if (TextUtils.isEmpty(name)) {
+                    ToastUtil.show(this, "名字不能为空");
+                    break;
+                } else if (TextUtils.isEmpty(mobile)) {
+                    ToastUtil.show(this, "电话号码不能为空");
+                    break;
+                } else if (!Validator.isMobile(mobile)) {
+                    ToastUtil.show(this, "请输入正确的手机号码");
+                    break;
+                } else if (TextUtils.isEmpty(size)) {
+                    ToastUtil.show(this, "装修面积不能为空");
+                    break;
+                } else if (TextUtils.isEmpty(floor)) {
+                    ToastUtil.show(this, "请输入具体的楼层数");
+                    break;
+                } else if (!NumUtil.isNumber(size)) {
+                    ToastUtil.show(this, "请输入正确的面积");
+                    break;
+                } else if (TextUtils.isEmpty(detailSite)) {
+                    ToastUtil.show(this, "详细地址不能为空");
+                    break;
+                } else if (shengId == -1) {
+                    ToastUtil.show(this, "请选择省份");
+                    break;
+                } else if (shiId == -1) {
+                    ToastUtil.show(this, "请选择城市");
+                    break;
+                } else if (quId == -1) {
+                    ToastUtil.show(this, "请选择quyu");
+                    break;
+                }
+                AddAddress(name, mobile, size, tv_time.getText().toString().trim(), detailSite, floor);
+                break;
+        }
+    }
+
+    private void AddAddress(String name, String mobile, String size, String time, String detailSite, String floor) {
+        params.clear();
+        myDialog.show();
+        if (gd_id != -1) {
+            params.put("gd_id", gd_id);
+        }
+        params.put("floor",floor);
+        params.put("stairway",stairway);
+        params.put("uid", OptimalMaterialTreasureApp.user.getId());
+        params.put("token", OptimalMaterialTreasureApp.user.getToken());
+        params.put("yezhu_name", name);
+        params.put("yezhu_mobile", mobile);
+        params.put("area", size);
+        params.put("start_time", time);
+        params.put("address", detailSite);
+        params.put("province_id", shengId);
+        params.put("city_id", shiId);
+        params.put("area_id", quId);
+        RetrofitManager.getInstance().create(CommonService.class)
+                .getData(new RequestBean.JsonMsg(ApiContstants.ADD_EDIT_ADDRESS, params).toJson())
+                .compose(this.<ResponseBean>bindToLifecycle())  //生命周期绑定
+                .observeOn(AndroidSchedulers.mainThread())      //设置观察者所在的线程
+                .subscribeOn(Schedulers.io())                   //设置被观察者所在的线程
+                .subscribe(new Subscriber<ResponseBean>() {
+                    @Override
+                    public void onCompleted() {
+                        myDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        L.i("数据加载失败！");
+                        e.printStackTrace();
+                        myDialog.dismiss();
+                        ToastUtil.show(AddSiteActivity.this, "添加工地失败");
+                    }
+
+                    @Override
+                    public void onNext(ResponseBean responseBean) {
+                        L.i("数据Data:" + responseBean.getData());
+                        if ("200".equals(responseBean.getStatus())) {
+                            ActivityManager.getInstance().finishActivity();
+                        } else {
+                            ToastUtil.show(AddSiteActivity.this, responseBean.getMessage());
+                        }
+                    }
+                });
+
+
+    }
+
+    private void getDataQu() {
+        params.clear();
+        if (shiId == -1) {
+            ToastUtil.show(this, "请先选择城市");
+            return;
+        }
+        myDialog.show();
+        params.put("c_id", shiId);
+        Subscription subscribe = RetrofitManager.getInstance().create(CommonService.class)
+                .getData(new RequestBean.JsonMsg(ApiContstants.GET_DISTRICT, params).toJson())
+                .compose(this.<ResponseBean>bindToLifecycle())  //生命周期绑定
+                .observeOn(AndroidSchedulers.mainThread())      //设置观察者所在的线程
+                .subscribeOn(Schedulers.io())                   //设置被观察者所在的线程
+                .subscribe(new Subscriber<ResponseBean>() {
+                    @Override
+                    public void onCompleted() {
+                        myDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        L.i("数据加载失败！");
+                        e.printStackTrace();
+                        myDialog.dismiss();
+                        ToastUtil.show(AddSiteActivity.this, "请求数据失败");
+                    }
+
+                    @Override
+                    public void onNext(ResponseBean responseBean) {
+                        L.i("数据Data:" + responseBean.getData());
+                        if ("200".equals(responseBean.getStatus())) {
+                            datas = gson.fromJson(responseBean.getData(), new TypeToken<ArrayList<Qu>>() {
+                            }.getType());
+                            SiteDialog siteDialog = new SiteDialog(AddSiteActivity.this, datas) {
+                                @Override
+                                public void getInfo(Address address) {
+                                    tv_qu.setText(address.name());
+                                    quId = address.id();
+                                }
+                            };
+                            siteDialog.setData(datas);
+                            siteDialog.show();
+                        } else {
+                            ToastUtil.show(AddSiteActivity.this, responseBean.getMessage());
+                        }
+                    }
+                });
+        compositeSubscription.add(subscribe);
+    }
+
+    private void getDataShi() {
+        params.clear();
+        if (shengId == -1) {
+            ToastUtil.show(this, "请先选择省份");
+            return;
+        }
+        myDialog.show();
+        params.put("p_id", shengId);
+        Subscription subscribe = RetrofitManager.getInstance().create(CommonService.class)
+                .getData(new RequestBean.JsonMsg(ApiContstants.GET_CITY, params).toJson())
+                .compose(this.<ResponseBean>bindToLifecycle())  //生命周期绑定
+                .observeOn(AndroidSchedulers.mainThread())      //设置观察者所在的线程
+                .subscribeOn(Schedulers.io())                   //设置被观察者所在的线程
+                .subscribe(new Subscriber<ResponseBean>() {
+                    @Override
+                    public void onCompleted() {
+                        myDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        L.i("数据加载失败！");
+                        e.printStackTrace();
+                        myDialog.dismiss();
+                        ToastUtil.show(AddSiteActivity.this, "请求数据失败");
+                    }
+
+                    @Override
+                    public void onNext(ResponseBean responseBean) {
+                        L.i("数据Data:" + responseBean.getData());
+                        if ("200".equals(responseBean.getStatus())) {
+                            datas = gson.fromJson(responseBean.getData(), new TypeToken<ArrayList<Shi>>() {
+                            }.getType());
+                            SiteDialog siteDialog = new SiteDialog(AddSiteActivity.this, datas) {
+                                @Override
+                                public void getInfo(Address address) {
+                                    tv_shi.setText(address.name());
+                                    if (shiId != address.id()) {
+                                        quId = -1;
+                                        tv_qu.setText("请选择");
+                                        shiId = address.id();
+                                    }
+                                }
+                            };
+                            siteDialog.show();
+                        } else {
+                            ToastUtil.show(AddSiteActivity.this, responseBean.getMessage());
+                        }
+                    }
+                });
+        compositeSubscription.add(subscribe);
+    }
+
+
+    private void getData() {
+        params.clear();
+        myDialog.show();
+        Subscription subscribe = RetrofitManager.getInstance().create(CommonService.class)
+                .getData(new RequestBean.JsonMsg(ApiContstants.GET_PROVINCES, params).toJson())
+                .compose(this.<ResponseBean>bindToLifecycle())  //生命周期绑定
+                .observeOn(AndroidSchedulers.mainThread())      //设置观察者所在的线程
+                .subscribeOn(Schedulers.io())                   //设置被观察者所在的线程
+                .subscribe(new Subscriber<ResponseBean>() {
+                    @Override
+                    public void onCompleted() {
+                        myDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        L.i("数据加载失败！");
+                        e.printStackTrace();
+                        myDialog.dismiss();
+                        ToastUtil.show(AddSiteActivity.this, "请求数据失败");
+                    }
+
+                    @Override
+                    public void onNext(ResponseBean responseBean) {
+                        L.i("数据Data:" + responseBean.getData());
+                        if ("200".equals(responseBean.getStatus())) {
+                            datas = gson.fromJson(responseBean.getData(), new TypeToken<ArrayList<Sheng>>() {
+                            }.getType());
+
+                            SiteDialog siteDialog = new SiteDialog(AddSiteActivity.this, datas) {
+                                @Override
+                                public void getInfo(Address address) {
+                                    tv_sheng.setText(address.name());
+                                    if (shengId != address.id()) {
+                                        shiId = -1;
+                                        quId = -1;
+                                        tv_shi.setText("请选择");
+                                        tv_qu.setText("请选择");
+                                        shengId = address.id();
+                                    }
+                                }
+                            };
+                            siteDialog.setData(datas);
+                            siteDialog.show();
+                        } else {
+                            ToastUtil.show(AddSiteActivity.this, responseBean.getMessage());
+                        }
+                    }
+                });
+        compositeSubscription.add(subscribe);
+    }
+
+
+    /**
+     * @param date 需要格式化的日期
+     * @return 格式化之后的日期
+     */
+
+    public static String getTime(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        return format.format(date);
+    }
+}
+

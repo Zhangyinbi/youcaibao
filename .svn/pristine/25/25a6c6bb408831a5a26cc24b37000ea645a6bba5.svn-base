@@ -1,0 +1,251 @@
+package com.youjuke.optimalmaterialtreasure.app.order;
+
+import android.os.Bundle;
+import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import com.youjuke.library.base.BaseActivity;
+import com.youjuke.library.utils.L;
+import com.youjuke.optimalmaterialtreasure.OptimalMaterialTreasureApp;
+import com.youjuke.optimalmaterialtreasure.R;
+import com.youjuke.optimalmaterialtreasure.retrofit.RequestBean;
+import com.youjuke.optimalmaterialtreasure.retrofit.ResponseBean;
+import com.youjuke.optimalmaterialtreasure.retrofit.RetrofitManager;
+import com.youjuke.optimalmaterialtreasure.retrofit.api.CommonService;
+import com.zhy.autolayout.AutoLinearLayout;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
+
+/**
+ * 描述: 查看订单详情界面
+ * ------------------------------------------------------------------------
+ * 工程:
+ * #0000     tian xiao     创建日期: 2017-03-24 11:59
+ */
+public class ExamineOrderDetailsActivity extends BaseActivity implements View.OnClickListener {
+
+
+    private Toolbar mToolBar;
+    /**
+     * 待收货
+     */
+    private TextView mTvStatus;
+    private ImageView mImageStatus;
+    private TextView mTvOwnerName;
+    private TextView mTvOwnerMobile;
+    private TextView mTvAcceptAddress;
+    private AutoLinearLayout mLlSelectAddress;
+    private RecyclerView mRvOrder;
+    private TextView mFreight;
+    private TextView mFloorPrice;
+    /**
+     * 查看送货时间
+     */
+    private TextView mTvCheckTime;
+    private TextView mTvTotalCount;
+    private TextView mTvOrderTotalPrice;
+    /**
+     * 132132465464654
+     */
+    private TextView mTvNo;
+    /**
+     * 2017-10-20
+     */
+    private TextView mTvAddTime;
+    private TextView mTvOrderId;
+    private TextView mTvOrderAddtime;
+    private ScrollView mScrollView;
+    private TextView mTvAccountMoney;
+    private AppCompatButton mBtnRechargeable;
+    private AutoLinearLayout mLyAccountMoney;
+    private TextView mTvTotalPrice;
+    /**
+     * 取消订单
+     */
+    private AppCompatButton mBtnCancel;
+    /**
+     * 立即支付
+     */
+    private AppCompatButton mBtnPayment;
+    private AutoLinearLayout mLlFunction;
+    private AutoLinearLayout mLlAllFunction;
+    private String mOrderId;
+
+    @Override
+    public void initViews(Bundle savedInstanceState) {
+        mOrderId=getIntent().getStringExtra("order_id");
+        initView();
+    }
+
+    @Override
+    public int getLayoutId() {
+        return R.layout.activity_examine_order_details;
+    }
+
+    @Override
+    public void initToolBar() {
+        mToolBar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                out();
+            }
+        });
+    }
+
+    /**
+     * 退出
+     */
+    private void out() {
+        finish();
+    }
+
+    public void initView() {
+        mToolBar = (Toolbar) findViewById(R.id.tool_bar);
+        mTvStatus = (TextView) findViewById(R.id.tv_status);
+        mImageStatus = (ImageView) findViewById(R.id.image_status);
+        mTvOwnerName = (TextView) findViewById(R.id.tv_owner_name);
+        mTvOwnerMobile = (TextView) findViewById(R.id.tv_owner_mobile);
+        mTvAcceptAddress = (TextView) findViewById(R.id.tv_accept_address);
+        mLlSelectAddress = (AutoLinearLayout) findViewById(R.id.ll_select_address);
+        mLlSelectAddress.setOnClickListener(this);
+        mRvOrder = (RecyclerView) findViewById(R.id.rv_order);
+        mFreight = (TextView) findViewById(R.id.freight);
+        mFloorPrice = (TextView) findViewById(R.id.floor_price);
+        mTvCheckTime = (TextView) findViewById(R.id.tv_check_time);
+        mTvTotalCount = (TextView) findViewById(R.id.tv_total_count);
+        mTvOrderTotalPrice = (TextView) findViewById(R.id.tv_order_total_price);
+        mTvNo = (TextView) findViewById(R.id.tv_no);
+        mTvAddTime = (TextView) findViewById(R.id.tv_add_time);
+        mTvOrderId = (TextView) findViewById(R.id.tv_order_id);
+        mTvOrderAddtime = (TextView) findViewById(R.id.tv_order_addtime);
+        mScrollView = (ScrollView) findViewById(R.id.scrollView);
+        mTvAccountMoney = (TextView) findViewById(R.id.tv_account_money);
+        mBtnRechargeable = (AppCompatButton) findViewById(R.id.btn_rechargeable);
+        mLyAccountMoney = (AutoLinearLayout) findViewById(R.id.ly_account_money);
+        mTvTotalPrice = (TextView) findViewById(R.id.tv_total_price);
+        mBtnCancel = (AppCompatButton) findViewById(R.id.btn_cancel);
+        mBtnPayment = (AppCompatButton) findViewById(R.id.btn_payment);
+        mLlFunction = (AutoLinearLayout) findViewById(R.id.ll_function);
+        mLlAllFunction = (AutoLinearLayout) findViewById(R.id.ll_all_function);
+        mToolBar.setOnClickListener(this);
+        mTvStatus.setOnClickListener(this);
+        mImageStatus.setOnClickListener(this);
+        mTvOwnerName.setOnClickListener(this);
+        mTvOwnerMobile.setOnClickListener(this);
+        mTvAcceptAddress.setOnClickListener(this);
+        mRvOrder.setOnClickListener(this);
+        mFreight.setOnClickListener(this);
+        mFloorPrice.setOnClickListener(this);
+        mTvCheckTime.setOnClickListener(this);
+        mTvTotalCount.setOnClickListener(this);
+        mTvOrderTotalPrice.setOnClickListener(this);
+        mTvNo.setOnClickListener(this);
+        mTvAddTime.setOnClickListener(this);
+        mTvOrderId.setOnClickListener(this);
+        mTvOrderAddtime.setOnClickListener(this);
+        mScrollView.setOnClickListener(this);
+        mTvAccountMoney.setOnClickListener(this);
+        mBtnRechargeable.setOnClickListener(this);
+        mLyAccountMoney.setOnClickListener(this);
+        mTvTotalPrice.setOnClickListener(this);
+        mBtnCancel.setOnClickListener(this);
+        mBtnPayment.setOnClickListener(this);
+        mLlFunction.setOnClickListener(this);
+        mLlAllFunction.setOnClickListener(this);
+        getData();
+    }
+
+    /**
+     * 获取展示信息
+     */
+    private void getData() {
+        params.clear();
+        params.put("uid", OptimalMaterialTreasureApp.user.getId());
+        params.put("token", OptimalMaterialTreasureApp.user.getToken());
+        params.put("order_id", mOrderId);
+        compositeSubscription.add(
+                RetrofitManager.getInstance().create(CommonService.class)
+                        .getData(new RequestBean.JsonMsg("order_detail", params).toJson())
+                        .compose(this.<ResponseBean>bindToLifecycle())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(new Action1<ResponseBean>() {
+                            @Override
+                            public void call(ResponseBean responseBean) {
+                                if ("200".equals(responseBean.getStatus())) {
+
+                                }
+                            }
+                        }, new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                L.e(throwable.toString());
+
+                            }
+                        })
+        );
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.ll_select_address:
+                break;
+            case R.id.tool_bar:
+                break;
+            case R.id.tv_status:
+                break;
+            case R.id.image_status:
+                break;
+            case R.id.tv_owner_name:
+                break;
+            case R.id.tv_owner_mobile:
+                break;
+            case R.id.tv_accept_address:
+                break;
+            case R.id.rv_order:
+                break;
+            case R.id.freight:
+                break;
+            case R.id.floor_price:
+                break;
+            case R.id.tv_check_time:
+                break;
+            case R.id.tv_total_count:
+                break;
+            case R.id.tv_order_total_price:
+                break;
+            case R.id.tv_no:
+                break;
+            case R.id.tv_add_time:
+                break;
+            case R.id.tv_order_id:
+                break;
+            case R.id.tv_order_addtime:
+                break;
+            case R.id.scrollView:
+                break;
+            case R.id.tv_account_money:
+                break;
+            case R.id.btn_rechargeable:
+                break;
+            case R.id.ly_account_money:
+                break;
+            case R.id.tv_total_price:
+                break;
+            case R.id.btn_cancel:
+                break;
+            case R.id.btn_payment:
+                break;
+            case R.id.ll_function:
+                break;
+            case R.id.ll_all_function:
+                break;
+        }
+    }
+}

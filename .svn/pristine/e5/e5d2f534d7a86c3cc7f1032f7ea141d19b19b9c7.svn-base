@@ -1,0 +1,199 @@
+package com.youjuke.optimalmaterialtreasure.app.wallet;
+
+import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+
+import com.google.gson.reflect.TypeToken;
+import com.youjuke.library.base.BaseActivity;
+import com.youjuke.library.manager.ActivityManager;
+import com.youjuke.library.utils.L;
+import com.youjuke.library.utils.ToastUtil;
+import com.youjuke.optimalmaterialtreasure.OptimalMaterialTreasureApp;
+import com.youjuke.optimalmaterialtreasure.R;
+import com.youjuke.optimalmaterialtreasure.entity.WalletInfo;
+import com.youjuke.optimalmaterialtreasure.retrofit.ApiContstants;
+import com.youjuke.optimalmaterialtreasure.retrofit.RequestBean;
+import com.youjuke.optimalmaterialtreasure.retrofit.ResponseBean;
+import com.youjuke.optimalmaterialtreasure.retrofit.RetrofitManager;
+import com.youjuke.optimalmaterialtreasure.retrofit.api.CommonService;
+
+import java.util.ArrayList;
+
+import me.everything.android.ui.overscroll.IOverScrollDecor;
+import me.everything.android.ui.overscroll.IOverScrollUpdateListener;
+import me.everything.android.ui.overscroll.ListenerStubs;
+import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
+/**
+ * 描述：钱包明细的界面
+ * author：zyb
+ * Created by Administrator on 2017/2/17.
+ */
+
+public class WalletActivity extends BaseActivity implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
+
+    private RadioGroup rg_group;
+    private RadioButton btn_all;
+    private RadioButton btn_order;
+    private RadioButton btn_recharge;
+    private RecyclerView recycler;
+    private ArrayList<WalletInfo> datas = new ArrayList();
+    private Walletdapter walletdapter;
+    private int deal_type = 0;
+    private float off = 0f;
+    private static final int MIXOFF = 100;//偏移量小于这个值不刷新
+    private ImageView iv_back;
+    ImageView ivNoWallet;
+    TextView tvHint;
+    @Override
+    public void initViews(Bundle savedInstanceState) {
+        rg_group = (RadioGroup) findViewById(R.id.rg_group);
+       /* btn_all = (RadioButton) findViewById(R.id.btn_all);
+        btn_all.setOnClickListener(this);
+        btn_order = (RadioButton) findViewById(R.id.btn_order);
+        btn_order.setOnClickListener(this);
+        btn_recharge = (RadioButton) findViewById(R.id.btn_recharge);
+        btn_recharge.setOnClickListener(this);*/
+        rg_group.check(R.id.btn_all);
+        rg_group.setOnCheckedChangeListener(this);
+        recycler = (RecyclerView) findViewById(R.id.rlv_recycle);
+        recycler.setLayoutManager(new LinearLayoutManager(this));
+        walletdapter = new Walletdapter(this, datas);
+        recycler.setAdapter(walletdapter);
+        iv_back = (ImageView) findViewById(R.id.iv_back);
+        iv_back.setOnClickListener(this);
+        ivNoWallet= (ImageView) findViewById(R.id.iv_no_wallet);
+        tvHint= (TextView) findViewById(R.id.tv_hint);
+        initScroll();
+        initData();
+    }
+
+    private void initScroll() {
+        IOverScrollDecor iOverScrollDecor = OverScrollDecoratorHelper.setUpOverScroll(recycler, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
+        View view = iOverScrollDecor.getView();
+        view.setBackgroundResource(R.color.back_f0f0f0);
+        iOverScrollDecor.setOverScrollStateListener(new ListenerStubs.OverScrollStateListenerStub() {
+            @Override
+            public void onOverScrollStateChange(IOverScrollDecor decor, int oldState, int newState) {
+                super.onOverScrollStateChange(decor, oldState, newState);
+                if (oldState == 1) {
+                    if (off > MIXOFF) {
+                        initData();
+                    }
+                }
+            }
+        });
+        //滑动状态监听，state 0-1-3 往下滑动 0-2-3往上滑动 offset滑动的偏移量
+        iOverScrollDecor.setOverScrollUpdateListener(new IOverScrollUpdateListener() {
+            @Override
+            public void onOverScrollUpdate(IOverScrollDecor decor, int state, float offset) {
+                off = offset;
+            }
+        });
+    }
+
+    private void initData() {
+        params.clear();
+        myDialog.show();
+        params.put("uid", OptimalMaterialTreasureApp.user.getId());
+        params.put("token", OptimalMaterialTreasureApp.user.getToken());
+        params.put("deal_type", deal_type);
+        params.put("cms_members_paylog.pay_type", "1");
+        Subscription subscribe = RetrofitManager.getInstance().create(CommonService.class)
+                .getData(new RequestBean.JsonMsg(ApiContstants.MY_DEALLOGS, params).toJson())
+                .compose(this.<ResponseBean>bindToLifecycle())  //生命周期绑定
+                .observeOn(AndroidSchedulers.mainThread())      //设置观察者所在的线程
+                .subscribeOn(Schedulers.io())                   //设置被观察者所在的线程
+                .subscribe(new Subscriber<ResponseBean>() {
+                    @Override
+                    public void onCompleted() {
+                        myDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        L.i("数据加载失败！");
+                        e.printStackTrace();
+                        myDialog.dismiss();
+                        ToastUtil.show(WalletActivity.this, "加载数据明细失败");
+                    }
+
+                    @Override
+                    public void onNext(ResponseBean responseBean) {
+                        L.i("数据Data:" + responseBean.getData());
+                        if ("200".equals(responseBean.getStatus())) {
+                            if (gson.fromJson(responseBean.getData(), new TypeToken<ArrayList<WalletInfo>>() {
+                            }.getType()) != null) {
+                                datas = gson.fromJson(responseBean.getData(), new TypeToken<ArrayList<WalletInfo>>() {
+                                }.getType());
+                                if (datas.size()!=0){
+                                    ivNoWallet.setVisibility(View.GONE);
+                                    tvHint.setVisibility(View.GONE);
+                                    recycler.setVisibility(View.VISIBLE);
+                                    walletdapter.setdata(datas);
+                                    walletdapter.notifyDataSetChanged();
+                                }else {
+                                    ivNoWallet.setVisibility(View.VISIBLE);
+                                    tvHint.setVisibility(View.VISIBLE);
+                                    recycler.setVisibility(View.GONE);
+                                }
+                            } else {
+                                ivNoWallet.setVisibility(View.VISIBLE);
+                                tvHint.setVisibility(View.VISIBLE);
+                                recycler.setVisibility(View.GONE);                            }
+                        } else {
+                            ToastUtil.show(WalletActivity.this, responseBean.getMessage());
+                        }
+                    }
+                });
+        compositeSubscription.add(subscribe);
+    }
+
+    @Override
+    public int getLayoutId() {
+        return R.layout.activity_wallet_detail;
+    }
+
+    @Override
+    public void initToolBar() {
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.iv_back:
+                ActivityManager.getInstance().finishActivity();
+                break;
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        switch (checkedId) {
+            case R.id.btn_all:
+                deal_type = 0;
+                initData();
+                break;
+            case R.id.btn_order:
+                deal_type = 1;
+                initData();
+                break;
+            case R.id.btn_recharge:
+                deal_type = 2;
+                initData();
+                break;
+
+        }
+    }
+}

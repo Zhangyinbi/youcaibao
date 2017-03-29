@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.autolayout.AutoLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:orientation="vertical">
+
+    <com.zhy.autolayout.AutoRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:paddingLeft="24px"
+        android:paddingRight="24px">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40px"
+            android:layout_marginTop="40px"
+            android:textColor="#333333"
+            android:textSize="40px" />
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="30px"
+            android:padding="16px"
+            android:src="@mipmap/btn_delete_2" />
+    </com.zhy.autolayout.AutoRelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="24px"
+        android:layout_marginRight="24px"
+        android:background="#e5e5e5" />
+
+
+    <com.zhy.autolayout.AutoRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="84px"
+        android:background="@android:color/transparent"
+        android:paddingLeft="24px"
+        android:paddingRight="24px">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="品牌："
+            android:textColor="#808080"
+            android:textSize="32px" />
+
+        <TextView
+            android:id="@+id/tv_brand"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:gravity="center_vertical"
+            android:padding="16px"
+            android:textColor="#333333"
+            android:textSize="32px" />
+    </com.zhy.autolayout.AutoRelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="24px"
+        android:layout_marginRight="24px"
+        android:background="#e5e5e5" />
+
+    <com.zhy.autolayout.AutoRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="84px"
+        android:background="@android:color/transparent"
+        android:paddingLeft="24px"
+        android:paddingRight="24px">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="规格："
+            android:textColor="#808080"
+            android:textSize="32px" />
+
+        <TextView
+            android:id="@+id/tv_material_norms"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:gravity="center_vertical"
+            android:padding="16px"
+            android:textColor="#333333"
+            android:textSize="32px" />
+    </com.zhy.autolayout.AutoRelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="24px"
+        android:layout_marginRight="24px"
+        android:background="#e5e5e5" />
+
+    <com.zhy.autolayout.AutoRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="84px"
+        android:background="@android:color/transparent"
+        android:paddingLeft="24px"
+        android:paddingRight="24px">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="型号："
+            android:textColor="#808080"
+            android:textSize="32px" />
+
+        <TextView
+            android:id="@+id/tv_material_model"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:gravity="center_vertical"
+            android:padding="16px"
+            android:textColor="#333333"
+            android:textSize="32px" />
+    </com.zhy.autolayout.AutoRelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="24px"
+        android:layout_marginRight="24px"
+        android:background="#e5e5e5" />
+
+    <com.zhy.autolayout.AutoRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="84px"
+        android:background="@android:color/transparent"
+        android:paddingLeft="24px"
+        android:paddingRight="24px">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="颜色："
+            android:textColor="#808080"
+            android:textSize="32px" />
+
+        <TextView
+            android:id="@+id/tv_material_color"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:gravity="center_vertical"
+            android:padding="16px"
+            android:textColor="#333333"
+            android:textSize="32px" />
+    </com.zhy.autolayout.AutoRelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="24px"
+        android:layout_marginRight="24px"
+        android:background="#e5e5e5" />
+
+    <com.zhy.autolayout.AutoRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="84px"
+        android:background="@android:color/transparent"
+        android:paddingLeft="24px"
+        android:paddingRight="24px">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="单价："
+            android:textColor="#808080"
+            android:textSize="32px" />
+
+        <TextView
+            android:id="@+id/tv_price"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:gravity="center_vertical"
+            android:padding="16px"
+            android:textColor="#ec0007"
+            android:textSize="32px" />
+    </com.zhy.autolayout.AutoRelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="24px"
+        android:layout_marginRight="24px"
+        android:background="#e5e5e5" />
+
+    <com.zhy.autolayout.AutoRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:paddingLeft="24px"
+        android:paddingRight="24px">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48px"
+            android:gravity="center_vertical"
+            android:text="数量："
+            android:textColor="#808080"
+            android:textSize="32px" />
+
+        <com.youjuke.optimalmaterialtreasure.weights.AmountView
+            android:layout_width="wrap_content"
+            android:layout_height="60px"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="38px"
+            android:id="@+id/av_num"
+            app:btnWidth="60px"
+            app:tvWidth="100px"></com.youjuke.optimalmaterialtreasure.weights.AmountView>
+
+    </com.zhy.autolayout.AutoRelativeLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="96px"
+        android:layout_marginTop="70px"
+        android:background="#518ced"
+        android:text="加入购物车"
+        android:id="@+id/btn_add_cart"
+        android:textColor="#ffffff"
+        android:textSize="38px" />
+
+</com.zhy.autolayout.AutoLinearLayout>

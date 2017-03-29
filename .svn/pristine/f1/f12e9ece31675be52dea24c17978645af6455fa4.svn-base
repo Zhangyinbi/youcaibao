@@ -1,0 +1,275 @@
+package com.youjuke.optimalmaterialtreasure.app.catalogue;
+
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ImageView;
+
+import com.google.gson.reflect.TypeToken;
+import com.youjuke.library.base.BaseActivity;
+import com.youjuke.library.manager.ActivityManager;
+import com.youjuke.library.utils.L;
+import com.youjuke.library.utils.ToastUtil;
+import com.youjuke.optimalmaterialtreasure.R;
+import com.youjuke.optimalmaterialtreasure.entity.MaterialGoodsDetails;
+import com.youjuke.optimalmaterialtreasure.entity.MaterialsClassify;
+import com.youjuke.optimalmaterialtreasure.retrofit.ApiContstants;
+import com.youjuke.optimalmaterialtreasure.retrofit.RequestBean;
+import com.youjuke.optimalmaterialtreasure.retrofit.ResponseBean;
+import com.youjuke.optimalmaterialtreasure.retrofit.RetrofitManager;
+import com.youjuke.optimalmaterialtreasure.retrofit.api.CommonService;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
+/**
+ * 描述：商品列表
+ * author：zyb
+ * Created by Administrator on 2017/2/13.
+ */
+
+public class GoodsListActivity extends BaseActivity implements View.OnClickListener {
+
+    private ImageView ivBack;
+    private int fid;
+    private int cid;
+    private int gid;
+    private String[] titles = {"水", "电", "泥", "木", "油", "厨电", "木门", "瓷砖"};
+    private List<String> clearKey = new ArrayList<String>() {
+        {
+            add("水");
+            add("电");
+            add("泥");
+            add("木");
+            add("油");
+            add("厨电");
+            add("木门");
+            add("瓷砖");
+        }
+    };
+    private List<Integer> clearKey1 = new ArrayList<Integer>() {
+        {
+            add(5);
+            add(6);
+            add(7);
+            add(8);
+            add(9);
+            add(110);
+            add(127);
+            add(109);
+        }
+    };
+    private int[] fids = {5, 6, 7, 8, 9, 110, 127, 109};
+    private RecyclerView brandCycler;
+    private RecyclerView goodsCycler;
+    private ArrayList<MaterialsClassify> brands = new ArrayList();
+    private ArrayList<MaterialGoodsDetails> materialgoods = new ArrayList();
+    private BrandsAdapter brandsAdapter;
+    private MaterialAdapter materialAdapter;
+    private TabLayout tabLayout;
+
+    @Override
+    public void initViews(Bundle savedInstanceState) {
+        fid = getIntent().getIntExtra("fid", -1);
+        cid = getIntent().getIntExtra("cid", -1);
+        gid = getIntent().getIntExtra("gid", -1);
+        if (fid>=10) {
+            String s = clearKey.get(fid - 5);
+            int p = clearKey1.get(fid - 5);
+            clearKey.remove(fid - 5);
+            clearKey1.remove(fid - 5);
+            clearKey.add(2, s);
+            clearKey1.add(2, p);
+        }
+        tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+        tabLayout.setTabTextColors(Color.parseColor("#333333"), Color.RED);
+        for (int i = 0; i < titles.length; i++) {
+            TabLayout.Tab tab = tabLayout.newTab().setText(clearKey.get(i));
+            tab.setTag(clearKey1.get(i));
+            tabLayout.addTab(tab);
+        }
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                fid = (int) tab.getTag();
+                brandsAdapter.setCid(-1);
+                brandsAdapter.setCurrent(0);
+                initData();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+
+        ivBack = (ImageView) findViewById(R.id.iv_back);
+        ivBack.setOnClickListener(this);
+
+        brandCycler = (RecyclerView) findViewById(R.id.rlv_recycle_brand);
+        brandsAdapter = new BrandsAdapter(this, brands, cid);
+        brandsAdapter.setOnItemClickListener(new BrandsAdapter.OnItemClickListener() {
+            @Override
+            public void ItemClickListener(int cid) {
+                getgoodsdetails(cid);
+            }
+        });
+        brandCycler.setLayoutManager(new LinearLayoutManager(this));
+        brandCycler.setAdapter(brandsAdapter);
+
+
+        goodsCycler = (RecyclerView) findViewById(R.id.rlv_recycle_goodsdetail);
+        materialAdapter = new MaterialAdapter(this, materialgoods);
+        materialAdapter.setOnItemClickListener(new MaterialAdapter.OnItemClickListener() {
+            @Override
+            public void ItemClickListener(int material_config_id) {
+                Intent intent = new Intent(GoodsListActivity.this, GoodsDetailActivity.class);
+                intent.putExtra("material_config_id", material_config_id);
+                startActivity(intent);
+            }
+        });
+        goodsCycler.setLayoutManager(new LinearLayoutManager(this));
+        goodsCycler.setAdapter(materialAdapter);
+        if (fid>=10){
+            tabLayout.getTabAt(2).select();
+        }else {
+            tabLayout.getTabAt(fid-5).select();
+        }
+        /*if (fid == 10) {
+            fid = 110;
+        } else if (fid == 11) {
+            fid = 127;
+        } else if (fid == 12) {
+            fid = 109;
+        }*/
+        if (fid == 5)
+            initData();
+    }
+
+    /**
+     * s商品列表信息   三级列表
+     */
+    private void getgoodsdetails(int cid) {
+//        myDialog.show();
+        materialgoods.clear();
+        params.clear();
+        params.put("cid", cid);
+        Subscription subscribe = RetrofitManager.getInstance().create(CommonService.class)
+                .getData(new RequestBean.JsonMsg(ApiContstants.MATERIALS_CONFIG_LIST, params).toJson())
+                .compose(this.<ResponseBean>bindToLifecycle())  //生命周期绑定
+                .observeOn(AndroidSchedulers.mainThread())      //设置观察者所在的线程
+                .subscribeOn(Schedulers.io())                   //设置被观察者所在的线程
+                .subscribe(new Subscriber<ResponseBean>() {
+                    @Override
+                    public void onCompleted() {
+//                        myDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        L.i("数据加载失败！");
+                        e.printStackTrace();
+//                        myDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onNext(ResponseBean responseBean) {
+                        L.i("三级列表数据Data:" + responseBean.getData());
+                        if ("200".equals(responseBean.getStatus())) {
+                            if (gson.fromJson(responseBean.getData(), new TypeToken<ArrayList<MaterialsClassify>>() {
+                            }.getType()) != null) {
+                                materialgoods = gson.fromJson(responseBean.getData(), new TypeToken<ArrayList<MaterialGoodsDetails>>() {
+                                }.getType());
+                                materialAdapter.setdata(materialgoods);
+                            }
+                            materialAdapter.notifyDataSetChanged();
+                        } else {
+                            ToastUtil.show(GoodsListActivity.this, responseBean.getMessage());
+                        }
+                    }
+                });
+        compositeSubscription.add(subscribe);
+    }
+
+    private void initData() {
+        brands.clear();
+        materialgoods.clear();
+//        myDialog.show();
+        params.clear();
+        params.put("fid", fid);
+        Subscription subscribe = RetrofitManager.getInstance().create(CommonService.class)
+                .getData(new RequestBean.JsonMsg(ApiContstants.MATERIALS_CLASSIFY, params).toJson())
+                .compose(this.<ResponseBean>bindToLifecycle())  //生命周期绑定
+                .observeOn(AndroidSchedulers.mainThread())      //设置观察者所在的线程
+                .subscribeOn(Schedulers.io())                   //设置被观察者所在的线程
+                .subscribe(new Subscriber<ResponseBean>() {
+                    @Override
+                    public void onCompleted() {
+//                        myDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        L.i("数据加载失败！");
+                        e.printStackTrace();
+                        ToastUtil.show(getApplicationContext(), "数据加载失败，请检查网络连接设置");
+//                        myDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onNext(ResponseBean responseBean) {
+                        L.i("首页数据Data:" + responseBean.getData());
+                        if ("200".equals(responseBean.getStatus())) {
+                            if (gson.fromJson(responseBean.getData(), new TypeToken<ArrayList<MaterialsClassify>>() {
+                            }.getType()) != null) {
+                                brands = gson.fromJson(responseBean.getData(), new TypeToken<ArrayList<MaterialsClassify>>() {
+                                }.getType());
+                                brandsAdapter.setdata(brands);
+                            }
+                            brandsAdapter.notifyDataSetChanged();
+                            materialAdapter.notifyDataSetChanged();
+                        } else {
+                            ToastUtil.show(GoodsListActivity.this, responseBean.getMessage());
+                        }
+                    }
+                });
+        compositeSubscription.add(subscribe);
+
+
+    }
+
+    @Override
+    public int getLayoutId() {
+        return R.layout.activity_goodslist;
+    }
+
+    @Override
+    public void initToolBar() {
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.iv_back:
+                ActivityManager.getInstance().finishActivity();
+                break;
+        }
+    }
+}

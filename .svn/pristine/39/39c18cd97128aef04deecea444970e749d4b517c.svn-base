@@ -1,0 +1,60 @@
+package com.youjuke.optimalmaterialtreasure.retrofit;
+
+/**
+ * 描述:
+ * API 连接常量
+ * <p>
+ * 工程:
+ * #0000    Tian Xiao    2016-09-13 10:09
+ */
+public class ApiContstants {
+    //登录
+    public static final String LOGIN = "login";
+    //首页
+    public static final String INDEX_PAGE = "index_page";
+    //一级商品品牌列表
+    public static final String MATERIALS_CLASSIFY = "materials_classify";
+    //二级商品列表
+    public static final String MATERIALS_CONFIG_LIST = "materials_config_list";
+    //具体商品的类别
+    public static final String MATERIAL_DETAIL = "material_detail";
+    //购物车详情列表
+    public static final String SHOPCART_LIST = "shopcart_list";
+    //添加购物车
+    public static final String ADD_SHOPCART = "add_shopcart";
+    //购物车商品数量
+    public static final String SMALL_CART = "small_cart";
+    //个人中心
+    public static final String MY_CENTER = "my_center";
+    //订单跟踪
+    public static final String ORDER_LIST = "order_list";
+    //订单列表
+    public static final String ADDRESS_LIST = "address_list";
+    //删除工地
+    public static final String DEL_ADDRESS = "del_address";
+    //省
+    public static final String GET_PROVINCES = "get_provinces";
+    //市
+    public static final String GET_CITY = "get_city";
+    //区
+    public static final String GET_DISTRICT = "get_district";
+    //增加工地
+    public static final String ADD_EDIT_ADDRESS = "add_edit_address";
+    //退出登录
+    public static final String LOGIN_OUT = "login_out";
+    //钱包明细
+    public static final String MY_DEALLOGS = "my_deallogs";
+    //获取工地信息
+    public static final String ADDRESS_DETAIL="address_detail";
+    //修改支付密码
+    public static final String CHANGE_PAYPWD="change_paypwd";
+    //修改登录密码
+    public static final String CHANGE_PASSWORD="change_password";
+    //检测更新
+    public static final String APP_CURRENT_VERSION = "app_current_version";
+    //确认收货
+    public static final String ORDER_RECEIVE = "order_receive";
+    //删除订单
+    public static final String ORDER_REMOVE = "order_remove";
+
+}

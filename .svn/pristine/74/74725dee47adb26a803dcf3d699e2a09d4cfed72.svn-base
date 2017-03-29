@@ -1,0 +1,595 @@
+package com.youjuke.optimalmaterialtreasure.app.order;
+
+import android.app.Dialog;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.ScrollView;
+import android.widget.TextView;
+
+import com.youjuke.library.base.BaseActivity;
+import com.youjuke.library.utils.DateUtil;
+import com.youjuke.library.utils.MoneySimpleFormat;
+import com.youjuke.library.utils.NumUtil;
+import com.youjuke.library.utils.ToastUtil;
+import com.youjuke.optimalmaterialtreasure.OptimalMaterialTreasureApp;
+import com.youjuke.optimalmaterialtreasure.R;
+import com.youjuke.optimalmaterialtreasure.app.rechargeable.PaySuccessActivity;
+import com.youjuke.optimalmaterialtreasure.app.rechargeable.RechargeableActivity;
+import com.youjuke.optimalmaterialtreasure.app.shopping_cart.DialogFragments.PaymentCodeDialogFragment;
+import com.youjuke.optimalmaterialtreasure.app.shopping_cart.DialogTime;
+import com.youjuke.optimalmaterialtreasure.entity.CardBean;
+import com.youjuke.optimalmaterialtreasure.entity.OrderDetail;
+import com.youjuke.optimalmaterialtreasure.retrofit.ApiContstants;
+import com.youjuke.optimalmaterialtreasure.retrofit.MSubscriber;
+import com.youjuke.optimalmaterialtreasure.retrofit.RequestBean;
+import com.youjuke.optimalmaterialtreasure.retrofit.ResponseBean;
+import com.youjuke.optimalmaterialtreasure.retrofit.RetrofitManager;
+import com.youjuke.optimalmaterialtreasure.retrofit.api.CommonService;
+import com.youjuke.optimalmaterialtreasure.weights.PwdInputView;
+import com.youjuke.optimalmaterialtreasure.weights.SweetAlertDialog;
+import com.zhy.autolayout.AutoLinearLayout;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
+/**
+ * 描述: 查看订单详情界面
+ * ------------------------------------------------------------------------
+ * 工程:
+ * #0000     tian xiao     创建日期: 2017-03-24 11:59
+ */
+public class ExamineOrderDetailsActivity extends BaseActivity implements View.OnClickListener, OnCancelListener {
+
+
+    private Toolbar mToolBar;
+    private OrderDetail orderDetail;
+    private PaymentCodeDialogFragment paymentCodeDialog;
+    SweetAlertDialog.Builder builder;
+    private CountDownTimer countDownTimer;
+    /**
+     * 待收货
+     */
+    private TextView mTvStatus;
+    private ImageView mImageStatus;
+    private TextView mTvOwnerName;
+    private TextView mTvOwnerMobile;
+    private TextView mTvAcceptAddress;
+    private AutoLinearLayout mLlSelectAddress;
+    private RecyclerView mRvOrder;
+    private TextView mFreight;
+    /**
+     * 查看送货时间
+     */
+    private TextView mTvTotalCount;
+    private TextView mTvOrderTotalPrice;
+    /**
+     * 132132465464654
+     */
+    private TextView mTvNo;
+    /**
+     * 2017-10-20
+     */
+    private TextView mTvAddTime;
+    private TextView mTvOrderId;
+    private TextView mTvOrderAddtime;
+    private ScrollView mScrollView;
+    private AppCompatButton mBtnRechargeable;
+    private AutoLinearLayout mLyAccountMoney;
+    private TextView mTvTotalPrice;
+    /**
+     * 取消订单
+     */
+    private AppCompatButton mBtnCancel;
+    /**
+     * 立即支付
+     */
+    private AppCompatButton mBtnPayment;
+    private AutoLinearLayout mLlFunction;
+    private AutoLinearLayout mLlAllFunction;
+    private String mOrderId;
+    private TextView tvTotal;
+    private TextView tvAccountMoney;
+    private int orderStatus;
+    private TextView tvOrderStatusDfkTime;
+    private TextView tvCancelOrClose;
+    private TextView tvCancelOrCloseTime;
+    private AutoLinearLayout all_cancel_or_close;
+    private AutoLinearLayout allSend;
+    private TextView tvSendTime;
+    private AutoLinearLayout allReceipt;
+    private TextView tvReceiptTime;
+    private TextView floorPrice;
+    private TextView tvCheckTime;
+    private ExamineOrderDetailsAdapter detailsAdapter;
+    private AutoLinearLayout ll_isOilPaint;
+
+    @Override
+    public void initViews(Bundle savedInstanceState) {
+        mOrderId = getIntent().getStringExtra("order_id");
+        initView();
+    }
+
+    @Override
+    public int getLayoutId() {
+        return R.layout.activity_examine_order_details;
+    }
+
+    @Override
+    public void initToolBar() {
+        mToolBar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                out();
+            }
+        });
+    }
+
+    /**
+     * 退出
+     */
+    private void out() {
+        finish();
+    }
+
+    public void initView() {
+        ll_isOilPaint = (AutoLinearLayout) findViewById(R.id.ll_isOilPaint);
+        tvCheckTime = (TextView) findViewById(R.id.tv_check_time);
+        floorPrice = (TextView) findViewById(R.id.floor_price);
+        allReceipt = (AutoLinearLayout) findViewById(R.id.all_receipt);
+        tvReceiptTime = (TextView) findViewById(R.id.tv_receipt_time);
+        tvSendTime = (TextView) findViewById(R.id.tv_send_time);
+        allSend = (AutoLinearLayout) findViewById(R.id.all_send);
+        all_cancel_or_close = (AutoLinearLayout) findViewById(R.id.all_cancel_or_close);
+        tvCancelOrClose = (TextView) findViewById(R.id.tv_cancel_or_close);
+        tvCancelOrCloseTime = (TextView) findViewById(R.id.tv_cancel_or_close_time);
+        tvOrderStatusDfkTime = (TextView) findViewById(R.id.tv_order_status_dfk_time);
+        tvAccountMoney = (TextView) findViewById(R.id.tv_account_money);
+        tvTotal = (TextView) findViewById(R.id.tv_total);
+        mToolBar = (Toolbar) findViewById(R.id.tool_bar);
+        mTvStatus = (TextView) findViewById(R.id.tv_status);
+        mImageStatus = (ImageView) findViewById(R.id.image_status);
+        mTvOwnerName = (TextView) findViewById(R.id.tv_owner_name);
+        mTvOwnerMobile = (TextView) findViewById(R.id.tv_owner_mobile);
+        mTvAcceptAddress = (TextView) findViewById(R.id.tv_accept_address);
+        mLlSelectAddress = (AutoLinearLayout) findViewById(R.id.ll_select_address);
+        mLlSelectAddress.setOnClickListener(this);
+        mRvOrder = (RecyclerView) findViewById(R.id.rv_order);
+        mFreight = (TextView) findViewById(R.id.freight);
+        mTvTotalCount = (TextView) findViewById(R.id.tv_total_count);
+        mTvOrderTotalPrice = (TextView) findViewById(R.id.tv_order_total_price);
+        mTvNo = (TextView) findViewById(R.id.tv_no);
+        mTvAddTime = (TextView) findViewById(R.id.tv_add_time);
+        mTvOrderId = (TextView) findViewById(R.id.tv_order_id);
+        mTvOrderAddtime = (TextView) findViewById(R.id.tv_order_addtime);
+        mScrollView = (ScrollView) findViewById(R.id.scrollView);
+        mBtnRechargeable = (AppCompatButton) findViewById(R.id.btn_rechargeable);
+        mLyAccountMoney = (AutoLinearLayout) findViewById(R.id.ly_account_money);
+        mTvTotalPrice = (TextView) findViewById(R.id.tv_total_price);
+        mBtnCancel = (AppCompatButton) findViewById(R.id.btn_cancel);
+        mBtnPayment = (AppCompatButton) findViewById(R.id.btn_payment);
+        mLlFunction = (AutoLinearLayout) findViewById(R.id.ll_function);
+        mLlAllFunction = (AutoLinearLayout) findViewById(R.id.ll_all_function);
+        mToolBar.setOnClickListener(this);
+        tvCheckTime.setOnClickListener(this);
+        mTvStatus.setOnClickListener(this);
+        mImageStatus.setOnClickListener(this);
+        mTvOwnerName.setOnClickListener(this);
+        mTvOwnerMobile.setOnClickListener(this);
+        mTvAcceptAddress.setOnClickListener(this);
+        mRvOrder.setOnClickListener(this);
+        mTvNo.setOnClickListener(this);
+        mTvAddTime.setOnClickListener(this);
+        mTvOrderId.setOnClickListener(this);
+        mTvOrderAddtime.setOnClickListener(this);
+        mScrollView.setOnClickListener(this);
+        mBtnRechargeable.setOnClickListener(this);
+        mTvTotalPrice.setOnClickListener(this);
+        mBtnCancel.setOnClickListener(this);
+        mBtnPayment.setOnClickListener(this);
+        mLlFunction.setOnClickListener(this);
+        mLlAllFunction.setOnClickListener(this);
+        detailsAdapter = new ExamineOrderDetailsAdapter(this, null);
+        mRvOrder.setLayoutManager(new LinearLayoutManager(this));
+        mRvOrder.setAdapter(detailsAdapter);
+        getData();
+    }
+
+    /**
+     * 获取订单详情信息
+     */
+    private void getData() {
+        params.clear();
+        myDialog.show();
+        params.put("uid", OptimalMaterialTreasureApp.user.getId());
+        params.put("token", OptimalMaterialTreasureApp.user.getToken());
+        params.put("orderId", mOrderId);
+        compositeSubscription.add(
+                RetrofitManager.getInstance().create(CommonService.class)
+                        .getData(new RequestBean.JsonMsg("order_detail", params).toJson())
+                        .compose(this.<ResponseBean>bindToLifecycle())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(new MSubscriber(ExamineOrderDetailsActivity.this, myDialog) {
+                            @Override
+                            public void mOnNextCorrect(ResponseBean responseBean) {
+                                orderDetail = gson.fromJson(responseBean.getData(), OrderDetail.class);
+                                initData();
+                            }
+
+                            @Override
+                            public void mOnNextFault(ResponseBean responseBean) {
+                                ToastUtil.show(ExamineOrderDetailsActivity.this, responseBean.getMessage());
+                            }
+                        })
+        );
+    }
+
+    /**
+     * 填充数据
+     */
+    private void initData() {
+        detailsAdapter.addAll(orderDetail.getMaterials());
+        detailsAdapter.notifyDataSetChanged();
+
+        //地址
+        mTvStatus.setText(orderDetail.getTotalInfo().getOrderStatusCh());
+        mTvNo.setText(orderDetail.getTotalInfo().getNo());
+        mTvAddTime.setText(orderDetail.getTotalInfo().getAddtime());
+        orderStatus = Integer.parseInt(orderDetail.getTotalInfo().getOrderStatus());
+        if (orderStatus == 1) {//待付款
+            mImageStatus.setImageResource(R.mipmap.btn_dfk);
+            tvAccountMoney.setText("(" + MoneySimpleFormat.getMoneyType(orderDetail.getTotalInfo().getAccountMoney()) + ")");
+            mBtnCancel.setText("取消订单");
+            mBtnPayment.setBackgroundResource(R.drawable.bt_red);
+            mBtnPayment.setText("付款");
+            //添加倒计时
+            countDownTimer = new CountDownTimer(orderDetail.getTotalInfo().getCountdown() * 1000, 1000) {
+                @Override
+                public void onTick(long l) {
+                    orderDetail.getTotalInfo().setCountdown(orderDetail.getTotalInfo().getCountdown() - 1);
+                    String date = DateUtil.secondToDHMS(orderDetail.getTotalInfo().getCountdown());
+                    tvOrderStatusDfkTime.setText("剩" + date + "自动关闭");
+                }
+
+                @Override
+                public void onFinish() {
+                    finish();
+                    ToastUtil.show(ExamineOrderDetailsActivity.this, "订单已关闭");
+                }
+            }.start();
+            tvOrderStatusDfkTime.setVisibility(View.VISIBLE);
+            mBtnCancel.setVisibility(View.VISIBLE);
+            mLlFunction.setVisibility(View.VISIBLE);
+            tvTotal.setVisibility(View.VISIBLE);
+            mTvTotalPrice.setVisibility(View.VISIBLE);
+            mLyAccountMoney.setVisibility(View.VISIBLE);
+            mBtnPayment.setVisibility(View.VISIBLE);
+            mTvTotalPrice.setText(MoneySimpleFormat.getMoneyType(orderDetail.getTotalInfo().getPayable()));
+        } else if (orderStatus == 2 || orderStatus == 3 || orderStatus == 4 || orderStatus == 6) {//待发货
+            mImageStatus.setImageResource(R.mipmap.btn_dfh);
+            all_cancel_or_close.setVisibility(View.VISIBLE);
+            tvCancelOrClose.setText("付款时间：");
+            tvCancelOrCloseTime.setText(orderDetail.getTotalInfo().getOrder_paytime());
+        } else if (orderStatus == 5) {//待收货
+            mImageStatus.setImageResource(R.mipmap.btn_dsh);
+            mBtnPayment.setBackgroundResource(R.drawable.bt_red);
+            mBtnPayment.setText("确认收货");
+            tvCancelOrClose.setText("付款时间：");
+            tvCancelOrCloseTime.setText(orderDetail.getTotalInfo().getOrder_paytime());
+            tvSendTime.setText(orderDetail.getTotalInfo().getReceipt_time());
+            allSend.setVisibility(View.VISIBLE);
+            all_cancel_or_close.setVisibility(View.VISIBLE);
+            mLlFunction.setVisibility(View.VISIBLE);
+            mBtnPayment.setVisibility(View.VISIBLE);
+        } else if (orderStatus == 7) {//已收货。完成交易
+            mImageStatus.setImageResource(R.mipmap.btn_ysh);
+            tvSendTime.setText(orderDetail.getTotalInfo().getReceipt_time());
+            tvCancelOrClose.setText("付款时间：");
+            tvCancelOrCloseTime.setText(orderDetail.getTotalInfo().getOrder_paytime());
+            tvReceiptTime.setText(orderDetail.getTotalInfo().getDelivery_time());
+            allReceipt.setVisibility(View.VISIBLE);
+            all_cancel_or_close.setVisibility(View.VISIBLE);
+            allSend.setVisibility(View.VISIBLE);
+            mBtnPayment.setVisibility(View.GONE);
+            mLlFunction.setVisibility(View.GONE);
+        } else if (orderStatus == 8) {//交易关闭
+            mImageStatus.setImageResource(R.mipmap.btn_jygb);
+            mBtnCancel.setText("删除订单");
+            tvCancelOrClose.setText("取消时间：");
+            tvCancelOrCloseTime.setText(orderDetail.getTotalInfo().getCanceltime());
+            all_cancel_or_close.setVisibility(View.VISIBLE);
+            mLlFunction.setVisibility(View.VISIBLE);
+            mBtnCancel.setVisibility(View.VISIBLE);
+            tvOrderStatusDfkTime.setVisibility(View.GONE);
+            tvTotal.setVisibility(View.GONE);
+            mTvTotalPrice.setVisibility(View.GONE);
+            mLyAccountMoney.setVisibility(View.GONE);
+            mBtnPayment.setVisibility(View.GONE);
+        }
+        if (orderDetail.getTotalInfo().getIs_oil_pain()==1){
+            ll_isOilPaint.setVisibility(View.VISIBLE);
+        }else {
+            ll_isOilPaint.setVisibility(View.GONE);
+        }
+        mTvOwnerName.setText(orderDetail.getBuildingSite().getOwnerName());
+        mTvOwnerMobile.setText(orderDetail.getBuildingSite().getOwnerMobile());
+        mTvAcceptAddress.setText(orderDetail.getBuildingSite().getAcceptAddress());
+
+        //合计
+        String stairWayFee = orderDetail.getTotalInfo().getStairwayFee();
+        String freight = orderDetail.getTotalInfo().getFreight();
+        if (NumUtil.isNumber(stairWayFee)) {
+            stairWayFee = MoneySimpleFormat.getMoneyType(stairWayFee).substring(1);
+        }
+        if (NumUtil.isNumber(freight)) {
+            freight = MoneySimpleFormat.getMoneyType(freight).substring(1);
+        }
+        floorPrice.setText(stairWayFee);
+        mFreight.setText(freight);
+        mTvTotalCount.setText(orderDetail.getTotalInfo().getTotalCount());
+        mTvOrderTotalPrice.setText(MoneySimpleFormat.getMoneyType(orderDetail.getTotalInfo().getPayable()));
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.tv_check_time://查看送货时间
+                new DialogTime(this).show();
+                break;
+            case R.id.ll_select_address:
+                break;
+            case R.id.tool_bar:
+                break;
+            case R.id.tv_status:
+                break;
+            case R.id.image_status:
+                break;
+            case R.id.tv_owner_name:
+                break;
+            case R.id.tv_owner_mobile:
+                break;
+            case R.id.tv_accept_address:
+                break;
+            case R.id.rv_order:
+                break;
+            case R.id.tv_no:
+                break;
+            case R.id.tv_add_time:
+                break;
+            case R.id.tv_order_id:
+                break;
+            case R.id.tv_order_addtime:
+                break;
+            case R.id.scrollView:
+                break;
+            case R.id.btn_rechargeable://充值
+                startActivity(new Intent(ExamineOrderDetailsActivity.this, RechargeableActivity.class));
+                break;
+            case R.id.tv_total_price:
+                break;
+            case R.id.btn_cancel:
+                if (orderStatus == 1) {//取消订单
+                    ReasonDialog.getInstance(this).setData(data()).setOnCancelListener(this).show();
+                } else if (orderStatus == 8) {//交易关闭，删除订单
+                    onDeleteOrder(mOrderId);
+                }
+                break;
+            case R.id.btn_payment:
+                if (orderStatus == 1) {//付款
+                    //进行支付
+                    payDialog();
+                } else if (orderStatus == 5) {
+                    onConfirmReceipt(mOrderId);
+                }
+                break;
+            case R.id.ll_function:
+                break;
+            case R.id.ll_all_function:
+                break;
+        }
+    }
+
+    /**
+     * @param Order_id 订单id
+     *                 描述：确认收货
+     */
+    public void onConfirmReceipt(String Order_id) {
+        params.clear();
+        myDialog.show();
+        params.put("uid", OptimalMaterialTreasureApp.user.getId());
+        params.put("token", OptimalMaterialTreasureApp.user.getToken());
+        params.put("order_id", Order_id);
+        compositeSubscription.add(RetrofitManager.getInstance().create(CommonService.class)
+                .getData(new RequestBean.JsonMsg(ApiContstants.ORDER_RECEIVE, params).toJson())
+                .compose(this.<ResponseBean>bindToLifecycle())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new MSubscriber(ExamineOrderDetailsActivity.this, myDialog) {
+                    @Override
+                    public void mOnNextCorrect(ResponseBean responseBean) {
+                        getData();
+                    }
+
+                    @Override
+                    public void mOnNextFault(ResponseBean responseBean) {
+                        ToastUtil.show(ExamineOrderDetailsActivity.this, responseBean.getMessage());
+                    }
+                }));
+    }
+
+    /**
+     * 付款
+     */
+    private void payDialog() {
+        //支付密码
+        paymentCodeDialog = new PaymentCodeDialogFragment(this, MoneySimpleFormat.getMoneyType(orderDetail.getTotalInfo().getPayable()));
+        paymentCodeDialog.getIvCancel().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                paymentCodeDialog.dismiss();
+            }
+        });
+        paymentCodeDialog.setOnClickListener(new PaymentCodeDialogFragment.OnClickListener() {
+            @Override
+            public void setOnClick(PwdInputView pwdInputView) {
+                pwdInputView.setInputCallBack(new PwdInputView.InputCallBack() {
+                    @Override
+                    public void onInputFinished(String payPwd) {
+                        //支付
+                        ordersPay(payPwd);
+                    }
+                });
+            }
+
+            @Override
+            public void setOnKeyBlack() {
+                paymentCodeDialog.dismiss();
+            }
+        });
+        paymentCodeDialog.show(getSupportFragmentManager(), "setPasswordDialog");
+    }
+
+    /**
+     * 支付
+     */
+    public void ordersPay(String paypwd) {
+        params.clear();
+        myDialog.show();
+        params.put("uid", OptimalMaterialTreasureApp.user.getId());
+        params.put("token", OptimalMaterialTreasureApp.user.getToken());
+        params.put("mobile", OptimalMaterialTreasureApp.user.getMobile());
+        params.put("paypwd", paypwd);
+        List<String> list = new ArrayList<>();
+        list.add(mOrderId);
+        params.put("orderIds", list);
+        compositeSubscription.add(
+                RetrofitManager.getInstance().create(CommonService.class)
+                        .getData(new RequestBean.JsonMsg("orders_pay", params).toJson())
+                        .compose(this.<ResponseBean>bindToLifecycle())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(new MSubscriber(ExamineOrderDetailsActivity.this, myDialog) {
+                                       @Override
+                                       public void mOnNextCorrect(ResponseBean responseBean) {
+                                           paymentCodeDialog.dismiss();
+                                           startActivity(new Intent(ExamineOrderDetailsActivity.this, PaySuccessActivity.class));
+                                           finish();
+                                       }
+
+                                       @Override
+                                       public void mOnNextFault(ResponseBean responseBean) {
+                                           paymentCodeDialog.dismiss();
+                                           if (responseBean.getError().equals("00005")) {//余额不足
+                                               showDialogRechargeable();//充值
+                                               return;
+                                           }
+                                           ToastUtil.show(ExamineOrderDetailsActivity.this, responseBean.getMessage());
+                                       }
+                                   }
+                        )
+        );
+    }
+
+    /***
+     * 提示
+     */
+    public void showDialogRechargeable() {
+        if (builder == null) {
+            builder = new SweetAlertDialog.Builder(this);
+        }
+        builder.setCancelable(true)
+                .setMessage("余额不足，请前去充值")
+                .setTitle("提示")
+                .setCancelableoutSide(false)
+                .setPositiveButton("充值", new SweetAlertDialog.OnDialogClickListener() {
+                    @Override
+                    public void onClick(Dialog dialog, int which) {
+                        startActivity(new Intent(ExamineOrderDetailsActivity.this, RechargeableActivity.class));
+                        dialog.dismiss();
+                    }
+                }).show();
+    }
+
+    /**
+     * @param Order_id 删除订单
+     */
+
+    public void onDeleteOrder(String Order_id) {
+        params.clear();
+        myDialog.show();
+        params.put("uid", OptimalMaterialTreasureApp.user.getId());
+        params.put("token", OptimalMaterialTreasureApp.user.getToken());
+        params.put("order_id", Order_id);
+        compositeSubscription.add(RetrofitManager.getInstance().create(CommonService.class)
+                .getData(new RequestBean.JsonMsg(ApiContstants.ORDER_REMOVE, params).toJson())
+                .compose(this.<ResponseBean>bindToLifecycle())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new MSubscriber(ExamineOrderDetailsActivity.this, myDialog) {
+                    @Override
+                    public void mOnNextCorrect(ResponseBean responseBean) {
+                        finish();
+                    }
+
+                    @Override
+                    public void mOnNextFault(ResponseBean responseBean) {
+                        ToastUtil.show(ExamineOrderDetailsActivity.this, responseBean.getMessage());
+                    }
+                }));
+    }
+
+    /**
+     * @param cancelReason 取消订单
+     */
+    @Override
+    public void CancelListener(int cancelReason) {
+        params.clear();
+        myDialog.show();
+        params.put("uid", OptimalMaterialTreasureApp.user.getId());
+        params.put("token", OptimalMaterialTreasureApp.user.getToken());
+        params.put("order_id", mOrderId);
+        params.put("cancelreason", cancelReason);
+        compositeSubscription.add(RetrofitManager.getInstance().create(CommonService.class)
+                .getData(new RequestBean.JsonMsg(ApiContstants.ORDER_CANCEL, params).toJson())
+                .compose(this.<ResponseBean>bindToLifecycle())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new MSubscriber(ExamineOrderDetailsActivity.this, myDialog) {
+                    @Override
+                    public void mOnNextCorrect(ResponseBean responseBean) {
+                        getData();
+                    }
+
+                    @Override
+                    public void mOnNextFault(ResponseBean responseBean) {
+                        ToastUtil.show(ExamineOrderDetailsActivity.this, responseBean.getMessage());
+                    }
+                }));
+    }
+
+    private ArrayList<CardBean> data() {
+        ArrayList<CardBean> cardItem = new ArrayList<>();
+        cardItem.add(new CardBean(1, "不想买了"));
+        cardItem.add(new CardBean(2, "信息填写错误,重新下单"));
+        cardItem.add(new CardBean(3, "其他原因"));
+        return cardItem;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+    }
+}
